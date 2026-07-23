@@ -22,14 +22,17 @@ const schema = Type.Object({
 
 type Params = Static<typeof schema>;
 
-const LAYOUT_MAP: Record<string, PowerPoint.SlideLayoutType> = {
-  "blank": PowerPoint.SlideLayoutType.blank,
-  "titleOnly": PowerPoint.SlideLayoutType.titleOnly,
-  "title": PowerPoint.SlideLayoutType.title,
-  "sectionHeader": PowerPoint.SlideLayoutType.sectionHeader,
-  "twoColumnText": PowerPoint.SlideLayoutType.twoColumnText,
-  "objectAndText": PowerPoint.SlideLayoutType.objectAndText,
-};
+function getSlideLayout(layout: string): PowerPoint.SlideLayoutType {
+  switch (layout) {
+    case "blank": return PowerPoint.SlideLayoutType.blank;
+    case "titleOnly": return PowerPoint.SlideLayoutType.titleOnly;
+    case "title": return PowerPoint.SlideLayoutType.title;
+    case "sectionHeader": return PowerPoint.SlideLayoutType.sectionHeader;
+    case "twoColumnText": return PowerPoint.SlideLayoutType.twoColumnText;
+    case "objectAndText": return PowerPoint.SlideLayoutType.objectAndText;
+    default: return PowerPoint.SlideLayoutType.title;
+  }
+}
 
 export function createSlideTool(): AgentTool<typeof schema> {
   return {
@@ -62,8 +65,7 @@ export function createSlideTool(): AgentTool<typeof schema> {
 
 async function createSlide(params: Params): Promise<string> {
   return pptRun(async (context) => {
-    const layout = LAYOUT_MAP[params.layout ?? "title"]
-      ?? PowerPoint.SlideLayoutType.title;
+    const layout = getSlideLayout(params.layout ?? "title");
 
     context.presentation.slides.add({ layoutId: layout });
     await context.sync();

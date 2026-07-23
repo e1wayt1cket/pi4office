@@ -43,7 +43,7 @@ function parseArgs() {
 }
 
 const { host: HOST, port: PORT, certDir: CERT_DIR } = parseArgs();
-const DIST_DIR = path.join(serverDir, "dist");
+const DIST_DIR = process.env.DIST_DIR || serverDir;
 const KEY_PATH = process.env.TLS_KEY_PATH || path.join(CERT_DIR, "key.pem");
 const CERT_PATH = process.env.TLS_CERT_PATH || path.join(CERT_DIR, "cert.pem");
 
@@ -357,6 +357,7 @@ function createServer() {
     },
     (req, res) => {
       const reqPath = (req.url || "/").split("?")[0];
+      console.log(`[req] ${req.method || "GET"} ${req.url} (remote: ${req.socket?.remoteAddress})`);
 
       // Proxy routes: /api-proxy/...
       if (reqPath.startsWith("/api-proxy/")) {

@@ -73,9 +73,9 @@ Section "Install"
   FileWrite $0 '  <Description DefaultValue="Open-source, multi-model AI assistant for Microsoft Office." />$\r$\n'
   FileWrite $0 '  <IconUrl DefaultValue="https://localhost:${PORT}/assets/icon-32.png" />$\r$\n'
   FileWrite $0 '  <HighResolutionIconUrl DefaultValue="https://localhost:${PORT}/assets/icon-80.png" />$\r$\n'
-  FileWrite $0 '  <SupportUrl DefaultValue="https://github.com/tmustier/pi4office" />$\r$\n'
+  FileWrite $0 '  <SupportUrl DefaultValue="https://github.com/e1wayt1cket/pi4office" />$\r$\n'
   FileWrite $0 '  <AppDomains>$\r$\n'
-  FileWrite $0 '    <AppDomain>https://localhost</AppDomain>$\r$\n'
+  FileWrite $0 '    <AppDomain>https://localhost:3141</AppDomain>$\r$\n'
   FileWrite $0 '  </AppDomains>$\r$\n'
   FileWrite $0 '  <Hosts>$\r$\n'
   FileWrite $0 '    <Host Name="Workbook" />$\r$\n'
@@ -96,14 +96,9 @@ Section "Install"
   CreateDirectory "$LOCALAPPDATA\Microsoft\Office\WEF"
   CopyFiles "$INSTDIR\manifest.xml" "$LOCALAPPDATA\Microsoft\Office\WEF\pi4office-manifest.xml"
 
-  ; Copy to Microsoft Store Office path if exists
-  ${If} ${FileExists} "$LOCALAPPDATA\Packages\Microsoft.Office.Desktop_*\LocalCache\Content\Microsoft\WEF\*.*"
-    FindFirst $0 $1 "$LOCALAPPDATA\Packages\Microsoft.Office.Desktop_*\LocalCache\Content\Microsoft\WEF"
-    ${If} $1 != ""
-      CopyFiles "$INSTDIR\manifest.xml" "$1\pi4office-manifest.xml"
-    ${EndIf}
-    FindClose $0
-  ${EndIf}
+  ; Copy to version-specific Wef path (e.g. 16.0\Wef) — required by some Office builds
+  CreateDirectory "$LOCALAPPDATA\Microsoft\Office\16.0\Wef"
+  CopyFiles "$INSTDIR\manifest.xml" "$LOCALAPPDATA\Microsoft\Office\16.0\Wef\pi4office-manifest.xml"
 
   ; Create start menu shortcut
   CreateDirectory "$SMPROGRAMS\${APP_NAME}"

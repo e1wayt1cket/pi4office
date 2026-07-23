@@ -34,12 +34,15 @@ const schema = Type.Object({
 
 type Params = Static<typeof schema>;
 
-const ALIGNMENT_MAP: Record<string, Word.Alignment> = {
-  "Left": Word.Alignment.left,
-  "Centered": Word.Alignment.centered,
-  "Right": Word.Alignment.right,
-  "Justified": Word.Alignment.justified,
-};
+function getAlignment(alignment: string): Word.Alignment {
+  switch (alignment) {
+    case "Left": return Word.Alignment.left;
+    case "Centered": return Word.Alignment.centered;
+    case "Right": return Word.Alignment.right;
+    case "Justified": return Word.Alignment.justified;
+    default: return Word.Alignment.left;
+  }
+}
 
 function buildChangeList(params: Params): string[] {
   const changes: string[] = [];
@@ -102,7 +105,7 @@ async function formatSelection(params: Params): Promise<string> {
     if (params.alignment !== undefined) {
       const firstParagraph = selection.paragraphs.getFirst();
       firstParagraph.alignment =
-        ALIGNMENT_MAP[params.alignment] ?? Word.Alignment.left;
+        getAlignment(params.alignment);
     }
 
     await context.sync();

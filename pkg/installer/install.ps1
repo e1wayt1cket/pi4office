@@ -37,9 +37,9 @@ $MANIFEST_CONTENT = @"
   <Description DefaultValue="Open-source, multi-model AI assistant for Microsoft Office." />
   <IconUrl DefaultValue="https://localhost:3141/assets/icon-32.png" />
   <HighResolutionIconUrl DefaultValue="https://localhost:3141/assets/icon-80.png" />
-  <SupportUrl DefaultValue="https://github.com/tmustier/pi4office" />
+  <SupportUrl DefaultValue="https://github.com/e1wayt1cket/pi4office" />
   <AppDomains>
-    <AppDomain>https://localhost</AppDomain>
+    <AppDomain>https://localhost:3141</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Workbook" />
@@ -74,27 +74,28 @@ function Write-Err($msg) {
 function Get-OfficeWefDir {
   $wefPaths = @()
 
-  # Common Office wef paths per app
-  $apps = @{
-    "Excel" = "com.microsoft.Excel"
-    "Word" = "com.microsoft.Word"
-    "PowerPoint" = "com.microsoft.Powerpoint"
+  # Microsoft Store Office path
+  $storeWef = "$env:LOCALAPPDATA\Packages\Microsoft.Office.Desktop_8wekyb3d8bbwe\LocalCache\Content\Microsoft\WEF"
+  if (Test-Path $storeWef) {
+    $wefPaths += @{ App = "Office (Store)"; Path = $storeWef }
   }
 
-  foreach ($app in $apps.GetEnumerator()) {
-    $wefDir = "$env:LOCALAPPDATA\Packages\Microsoft.Office.Desktop_8wekyb3d8bbwe\LocalCache\Content\Microsoft\WEF"
-    if (Test-Path $wefDir) {
-      $wefPaths += @{ App = $app.Key; Path = $wefDir }
-    }
+  # Classic Win32 Office — top-level WEF
+  $classicWef = "$env:LOCALAPPDATA\Microsoft\Office\WEF"
+  if (-not (Test-Path $classicWef)) {
+    New-Item -ItemType Directory -Path $classicWef -Force | Out-Null
   }
+  $wefPaths += @{ App = "Office"; Path = $classicWef }
 
-  # Alternative: classic Win32 Office path
-  if ($wefPaths.Count -eq 0) {
-    $wefDir = "$env:LOCALAPPDATA\Microsoft\Office\WEF"
-    if (-not (Test-Path $wefDir)) {
-      New-Item -ItemType Directory -Path $wefDir -Force | Out-Null
+  # Version-specific path (e.g. 16.0\Wef) — required by some Office builds
+  $officeRoot = "$env:LOCALAPPDATA\Microsoft\Office"
+  if (Test-Path $officeRoot) {
+    Get-ChildItem $officeRoot -Directory -Depth 0 -ErrorAction SilentlyContinue | ForEach-Object {
+      $versionWef = Join-Path $_.FullName "Wef"
+      if ((Test-Path $versionWef) -and $versionWef -ne $classicWef) {
+        $wefPaths += @{ App = "Office $($_.Name)"; Path = $versionWef }
+      }
     }
-    $wefPaths += @{ App = "Office"; Path = $wefDir }
   }
 
   return $wefPaths
