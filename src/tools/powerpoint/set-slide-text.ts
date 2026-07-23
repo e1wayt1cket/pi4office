@@ -21,28 +21,28 @@ const schema = Type.Object({
 
 type Params = Static<typeof schema>;
 
-export function createAddSlideNotesTool(): AgentTool<typeof schema> {
+export function createSetSlideTextTool(): AgentTool<typeof schema> {
   return {
-    name: "add_slide_notes",
-    label: t("tools.addSlideNotes"),
+    name: "set_slide_text",
+    label: t("tools.setSlideText"),
     description:
-      "Add or replace text on a specific slide. Specify the slide index (1-based) " +
-      "and the text to set. Optionally specify which shape to target (0 = title, " +
-      "1 = content, etc.).",
+      "Set or replace text on a specific slide shape. Specify the slide index (1-based) " +
+      "and the text to set. Optionally specify which shape to target by index " +
+      "(0 = title, 1 = content, etc.).",
     parameters: schema,
     execute: async (
       _toolCallId: string,
       params: Params,
     ): Promise<AgentToolResult<undefined>> => {
       try {
-        const text = await modifySlideText(params);
+        const text = await setSlideText(params);
         return {
           content: [{ type: "text", text }],
           details: undefined,
         };
       } catch (e) {
         return {
-          content: [{ type: "text", text: `Error modifying slide: ${getErrorMessage(e)}` }],
+          content: [{ type: "text", text: `Error setting slide text: ${getErrorMessage(e)}` }],
           details: undefined,
         };
       }
@@ -50,7 +50,7 @@ export function createAddSlideNotesTool(): AgentTool<typeof schema> {
   };
 }
 
-async function modifySlideText(params: Params): Promise<string> {
+async function setSlideText(params: Params): Promise<string> {
   return pptRun(async (context) => {
     const slides = context.presentation.slides;
     slides.load("items");
