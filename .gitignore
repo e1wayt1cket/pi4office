@@ -36,3 +36,4 @@ manifest.dev.xml
 
 # Session exports
 pi-session-*
+.vercel

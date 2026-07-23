@@ -14,7 +14,7 @@
   <Description DefaultValue="Open-source, multi-model AI sidebar add-in for Microsoft Office (Excel, Word, PowerPoint). Powered by Pi." />
   <IconUrl DefaultValue="https://pi4office.vercel.app/assets/icon-32.png" />
   <HighResolutionIconUrl DefaultValue="https://pi4office.vercel.app/assets/icon-80.png" />
-  <SupportUrl DefaultValue="https://github.com/tmustier/pi4office" />
+  <SupportUrl DefaultValue="https://github.com/e1wayt1cket/pi4office" />
 
   <Hosts>
     <Host Name="Workbook" />
