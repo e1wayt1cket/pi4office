@@ -1,0 +1,7 @@
+staging/
+*.exe
+*.zip
+nodejs/
+mkcert.exe
+certs/
+dist/
