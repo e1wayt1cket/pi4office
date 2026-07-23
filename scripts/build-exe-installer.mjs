@@ -44,6 +44,7 @@ function run(cmd, args, opts = {}) {
   const result = spawnSync(cmd, args, {
     stdio: "inherit",
     cwd: rootDir,
+    shell: true,
     ...opts,
   });
   if (result.error) {
@@ -69,9 +70,16 @@ async function downloadFile(url, destPath) {
   log(`Saved to: ${destPath}`);
 }
 
-function hasNsis() {
-  const result = spawnSync("makensis", ["-VERSION"], { stdio: "ignore" });
-  return result.status === 0;
+function findMakensis() {
+  // Check PATH first
+  const pathCheck = spawnSync("makensis", ["-VERSION"], { stdio: "ignore", shell: true });
+  if (pathCheck.status === 0) return "makensis";
+
+  // Windows default install path
+  const nsisPath = "C:\\Program Files (x86)\\NSIS\\makensis.exe";
+  if (fs.existsSync(nsisPath)) return nsisPath;
+
+  return null;
 }
 
 // --- Step 1: Build the frontend ---
@@ -183,7 +191,8 @@ if errorlevel 1 (
 
 // --- Step 5: Create NSIS exe (optional) ---
 function buildNsisExe() {
-  if (!hasNsis()) {
+  const makensis = findMakensis();
+  if (!makensis) {
     log("NSIS (makensis) not found. Install with: winget install NSIS.NSIS");
     log("Alternative: use the staging/ directory directly with install.ps1");
     return false;
@@ -198,7 +207,14 @@ function buildNsisExe() {
     return false;
   }
 
-  run("makensis", [nsiScript], { cwd: stagingDir });
+  // Copy NSIS script + LICENSE to staging for relative-path resolution
+  fs.copyFileSync(nsiScript, path.join(stagingDir, "setup.nsi"));
+  const licensePath = path.join(rootDir, "LICENSE");
+  if (fs.existsSync(licensePath)) {
+    fs.copyFileSync(licensePath, path.join(stagingDir, "LICENSE"));
+  }
+
+  run(makensis, ["setup.nsi"], { cwd: stagingDir });
   log("Installer exe built successfully.");
   return true;
 }
