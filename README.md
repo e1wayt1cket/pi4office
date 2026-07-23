@@ -2,7 +2,7 @@
 
 English | [简体中文](./README.zh-CN.md)
 
-Open-source, multi-model AI sidebar add-in for Microsoft Office — supports Excel, Word, and PowerPoint. Powered by [Pi](https://pi.dev).
+Open-source, multi-model AI sidebar add-in for Microsoft Office — supports Excel, Word, and PowerPoint. Powered by [Pi](https://pi.dev). Fork of [pi-for-excel](https://github.com/tmustier/pi-for-excel) by [Thomas Mustier](https://github.com/tmustier).
 
 Pi for Office is an AI agent that lives inside Microsoft Office. It reads your documents, makes changes, and does research — using any model you choose. Bring your own API key or OAuth login for Anthropic, OpenAI, Google Gemini, or GitHub Copilot.
 
@@ -306,6 +306,7 @@ Users install by downloading `manifest.prod.xml` and uploading it in Excel — t
 
 ## Credits
 
+- [pi-for-excel](https://github.com/tmustier/pi-for-excel) by [@tmustier](https://github.com/tmustier) (Thomas Mustier) — the original project. Pi for Office is a fork that extends pi-for-excel with Word, PowerPoint, and Chinese-language support.
 - [Pi](https://github.com/badlogic/pi-mono) by [@badlogic](https://github.com/badlogic) (Mario Zechner) — the agent framework powering this project. Pi for Office uses pi-agent-core, pi-ai, and pi-web-ui for the agent loop, LLM abstraction, and session storage.
 - [whimsical.ts](https://github.com/mitsuhiko/agent-stuff/blob/main/pi-extensions/whimsical.ts) by [@mitsuhiko](https://github.com/mitsuhiko) (Armin Ronacher) — the rotating "Working…" messages are adapted from his Pi extension, rewritten for a spreadsheet/finance audience.
 

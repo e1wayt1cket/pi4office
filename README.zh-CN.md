@@ -7,7 +7,7 @@
 
 > 本文档是简要中文指南，涵盖 **Microsoft Office 加载项**的**安装**与**模型配置**，支持 Excel、Word 和 PowerPoint。完整功能说明、开发者文档等请参阅[英文版 README](./README.md) 与 [docs/](./docs/README.md) 目录。WPS 表格支持另见英文文档 [docs/wps-support.md](./docs/wps-support.md)。
 
-Pi for Office 是一款开源、多模型的 Microsoft Office AI 侧边栏加载项，由 [Pi](https://pi.dev) 驱动，支持 **Excel**、**Word** 和 **PowerPoint**。
+Pi for Office 是一款开源、多模型的 Microsoft Office AI 侧边栏加载项，由 [Pi](https://pi.dev) 驱动，支持 **Excel**、**Word** 和 **PowerPoint**。本项目是 [pi-for-excel](https://github.com/tmustier/pi-for-excel) 的分支，原作者为 [Thomas Mustier](https://github.com/tmustier)。
 
 它是一个运行在 Office 内部的 AI 智能体：能读取你的文档、修改内容、进行联网研究——模型由你选择。既支持 Anthropic、OpenAI、Google Gemini、GitHub Copilot 的 API Key 或 OAuth 登录，也支持任何 **OpenAI 兼容接口**(如 DeepSeek、智谱 GLM、Ollama 本地模型等)。
 
@@ -173,6 +173,11 @@ npx pi4office-proxy
 | [docs/extensions.md](./docs/extensions.md) | 扩展开发指南 |
 | [docs/security-threat-model.md](./docs/security-threat-model.md) | 安全威胁模型 |
 | [docs/wps-support.md](./docs/wps-support.md) | WPS 表格支持现状与安装路径 |
+
+## 致谢
+
+- [pi-for-excel](https://github.com/tmustier/pi-for-excel) by [@tmustier](https://github.com/tmustier) (Thomas Mustier) — 原始项目。Pi for Office 是基于 pi-for-excel 的分支，扩展了 Word、PowerPoint 和中文支持。
+- [Pi](https://github.com/badlogic/pi-mono) by [@badlogic](https://github.com/badlogic) (Mario Zechner) — 本项目使用的 AI 智能体框架。
 
 ## 许可证
 
