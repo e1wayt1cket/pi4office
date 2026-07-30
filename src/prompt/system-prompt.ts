@@ -79,7 +79,7 @@ ${fileValue}`;
 }
 
 function buildExecutionModeSection(mode: ExecutionMode | undefined, appType: OfficeAppType): string {
-  const docType = appType === "word" ? "document" : appType === "powerpoint" ? "presentation" : "workbook";
+  const docType = appType === "word" ? "document" : "workbook";
 
   if (mode === "safe") {
     return `## Execution mode
@@ -378,7 +378,6 @@ function buildConventionOverridesSection(
 const APP_IDENTITIES: Record<OfficeAppType, string> = {
   excel: "You are Pi, an AI agent embedded in Microsoft Excel as a sidebar add-in. You can read, modify, format, and research — working directly in the user's live workbook.",
   word: "You are Pi, an AI agent embedded in Microsoft Word as a sidebar add-in. You can read, write, edit, and research — working directly in the user's live document.",
-  powerpoint: "You are Pi, an AI agent embedded in Microsoft PowerPoint as a sidebar add-in. You can read, create, edit, and research — working directly in the user's live presentation.",
   unknown: "You are Pi, an AI agent embedded in Microsoft Office as a sidebar add-in. You can read, modify, format, and research — working directly in the user's live document.",
 };
 
@@ -393,11 +392,35 @@ function buildToolsSection(appType: OfficeAppType): string {
     case "word":
       return `## Tools
 
-Core document tools:
+### Document Reading
 - **get_document_outline** — structural outline (sections, paragraphs, headings, word count)
+- **get_document_metadata** — document properties: author, dates, revision, company, keywords, security
 - **read_document** — read document content or selection; use selection_only for targeted reads
-- **insert_text** — insert text at cursor position or selection (Replace/Start/End/Before/After)
 - **search_document** — search text within the document with surrounding context
+
+### Document Editing
+- **insert_text** — insert text at cursor position or selection (Replace/Start/End/Before/After)
+- **write_document** — write or append text to the document body
+- **replace_text** — find and replace text across the document
+- **delete_text** — delete selected text or a range of paragraphs by index
+
+### Formatting & Layout
+- **format_document** — font (bold, italic, underline, name, size, color, highlight), paragraph alignment, line spacing, spacing before/after, indentation
+- **apply_style** — apply a named Word style to paragraphs (Heading 1, Normal, Quote, etc.)
+- **format_page_setup** — page margins (cm), orientation, paper size (A4/A3/Letter/Legal/B5), header/footer distance
+- **apply_format_preset** — one-click formatting: professional, government_document (GB/T 9704), academic_paper
+
+### Professional Features
+- **generate_toc** — insert a Table of Contents (TOC) field from heading styles
+- **add_comment** — add threaded comments attached to selected text
+- **insert_table** — insert a table with configurable rows, columns, headers, and cell data
+
+### Equations
+
+- **insert_equation** — insert a LaTeX math expression as a native Word equation (fractions, Greek, superscript, integrals, matrices, etc.)
+- **detect_math** — scan document for LaTeX math patterns ($...$, $$...$$, \\(...\\), etc.) and optionally auto-convert to native equations
+
+### Shared Tools
 - **instructions** — update persistent rules for all files or this file
 - **conventions** — read/update formatting defaults
 - **skills** — list/read Agent Skills and install/uninstall external SKILL.md skills
@@ -417,33 +440,6 @@ Built-in assistant docs are always available under \`assistant-docs/\`.
 Office.js runs inside Word — there is no separate Office.js bridge for end users to install.
 For document features not covered by structured tools, use **execute_office_js** instead of claiming setup is missing.
 Keep **execute_office_js** code strictly to the Word API (\`context\`, \`Word.*\`). Referencing browser globals triggers a user-approval prompt even in Auto mode — avoid them unless the user explicitly asked.`;
-
-    case "powerpoint":
-      return `## Tools
-
-Core presentation tools:
-- **get_presentation_overview** — structural overview (slide count, titles, layouts)
-- **read_slide** — read text content of a slide by index or currently selected slides
-- **add_slide_notes** — add or replace text on a specific slide's shapes
-- **search_presentation** — search text across all slides with surrounding context
-- **instructions** — update persistent rules for all files or this file
-- **conventions** — read/update formatting defaults
-- **skills** — list/read Agent Skills and install/uninstall external SKILL.md skills
-- **extensions_manager** — list/install/reload/enable/disable/uninstall sidebar extensions from code
-- **execute_office_js** — run direct Office.js against the active presentation when structured tools cannot express the operation (explanation required; approval is prompted in Confirm mode)
-
-### Python
-
-- **python_run** — execute a Python snippet and inspect stdout/stderr/result. Use for computation, data processing, or analysis.
-
-Python runs **in-browser via Pyodide** (WebAssembly) by default — no setup required. Standard-library modules and pure-Python packages (numpy, pandas, scipy, etc.) work out of the box.
-
-Other tools may be available depending on enabled experiments/integrations.
-Use **files** for workspace artifacts (list/read/write/delete files).
-Built-in assistant docs are always available under \`assistant-docs/\`.
-Office.js runs inside PowerPoint — there is no separate Office.js bridge for end users to install.
-For presentation features not covered by structured tools, use **execute_office_js** instead of claiming setup is missing.
-Keep **execute_office_js** code strictly to the PowerPoint API (\`context\`, \`PowerPoint.*\`). Referencing browser globals triggers a user-approval prompt even in Auto mode — avoid them unless the user explicitly asked.`;
 
     default:
       return `## Tools
@@ -475,8 +471,8 @@ If **execute_wps_js** is available, use synchronous WPS JSAPI through the provid
 }
 
 function buildWorkspaceSection(appType: OfficeAppType): string {
-  const docLabel = appType === "word" ? "documents" : appType === "powerpoint" ? "presentations" : "workbooks";
-  const docSlug = appType === "word" ? "documents" : appType === "powerpoint" ? "presentations" : "workbooks";
+  const docLabel = appType === "word" ? "documents" : "workbooks";
+  const docSlug = appType === "word" ? "documents" : "workbooks";
 
   return `## Workspace
 
@@ -514,17 +510,6 @@ function buildWorkflowSection(appType: OfficeAppType): string {
 2. **Edit scope.** Make the smallest set of changes that fulfills the request. Do not rewrite or restructure content beyond what was asked.
 3. **Verify changes.** After inserting or modifying text, re-read the surrounding content to verify correctness.
 4. **Report changes.** When a turn mutated the document, end by listing exactly what was changed.
-5. **Plan complex tasks.** In Confirm mode, present a plan and get approval first. In Auto mode, keep plans concise and proceed unless the user asked to review first.
-6. **Analysis = read-only.** When the user asks about content, read and answer in chat. Only write when asked to modify.
-7. **Extension requests.** If the user asks to create/update an extension, generate code and use **extensions_manager** so it is installed directly.`;
-
-    case "powerpoint":
-      return `## Workflow
-
-1. **Read first.** Always read slide content before modifying. Never guess what's in the presentation.
-2. **Edit scope.** Make the smallest set of changes that fulfills the request. Do not restructure slides beyond what was asked.
-3. **Verify changes.** After modifying slide content, re-read the slide to verify correctness.
-4. **Report changes.** When a turn mutated the presentation, end by listing exactly which slides were changed.
 5. **Plan complex tasks.** In Confirm mode, present a plan and get approval first. In Auto mode, keep plans concise and proceed unless the user asked to review first.
 6. **Analysis = read-only.** When the user asks about content, read and answer in chat. Only write when asked to modify.
 7. **Extension requests.** If the user asks to create/update an extension, generate code and use **extensions_manager** so it is installed directly.`;

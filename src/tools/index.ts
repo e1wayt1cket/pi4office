@@ -21,7 +21,6 @@ import {
   type ExtensionsManagerToolRuntime,
 } from "./extensions-manager.js";
 import { createWordTools } from "./word/index.js";
-import { createPptTools } from "./powerpoint/index.js";
 
 export interface CreateAllToolsOptions {
   hostKind?: SpreadsheetHostKind;
@@ -63,8 +62,8 @@ export function createAllTools(options: CreateAllToolsOptions = {}): AnyCoreTool
     );
   }
 
-  // execute_office_js for Word and PowerPoint (different API surface)
-  if (appType === "word" || appType === "powerpoint") {
+  // execute_office_js for Word (different API surface)
+  if (appType === "word") {
     tools.push(
       selectOfficeCoupledToolForHost(createExecuteOfficeJsTool(), hostKind),
     );
@@ -73,11 +72,6 @@ export function createAllTools(options: CreateAllToolsOptions = {}): AnyCoreTool
   // Word-specific tools
   if (appType === "word") {
     tools.push(...createWordTools());
-  }
-
-  // PowerPoint-specific tools
-  if (appType === "powerpoint") {
-    tools.push(...createPptTools());
   }
 
   if (hostKind === "wps") {

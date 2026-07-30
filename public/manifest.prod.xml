@@ -11,7 +11,7 @@
   <ProviderName>Pi for Office</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Pi for Office" />
-  <Description DefaultValue="Open-source, multi-model AI sidebar add-in for Microsoft Office (Excel, Word, PowerPoint). Powered by Pi." />
+  <Description DefaultValue="Open-source, multi-model AI sidebar add-in for Microsoft Office (Excel, Word). Powered by Pi." />
   <IconUrl DefaultValue="https://pi4office.vercel.app/assets/icon-32.png" />
   <HighResolutionIconUrl DefaultValue="https://pi4office.vercel.app/assets/icon-80.png" />
   <SupportUrl DefaultValue="https://github.com/e1wayt1cket/pi4office" />
@@ -19,7 +19,6 @@
   <Hosts>
     <Host Name="Workbook" />
     <Host Name="Document" />
-    <Host Name="Presentation" />
   </Hosts>
 
   <DefaultSettings>
@@ -63,38 +62,6 @@
         </DesktopFormFactor>
       </Host>
       <Host xsi:type="Document">
-        <DesktopFormFactor>
-          <ExtensionPoint xsi:type="PrimaryCommandSurface">
-            <OfficeTab id="TabHome">
-              <Group id="PiGroup">
-                <Label resid="GroupLabel" />
-                <Icon>
-                  <bt:Image size="16" resid="Icon16" />
-                  <bt:Image size="32" resid="Icon32" />
-                  <bt:Image size="80" resid="Icon80" />
-                </Icon>
-                <Control xsi:type="Button" id="OpenPiButton">
-                  <Label resid="ButtonLabel" />
-                  <Supertip>
-                    <Title resid="ButtonLabel" />
-                    <Description resid="ButtonDesc" />
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="Icon16" />
-                    <bt:Image size="32" resid="Icon32" />
-                    <bt:Image size="80" resid="Icon80" />
-                  </Icon>
-                  <Action xsi:type="ShowTaskpane">
-                    <TaskpaneId>PiTaskPane</TaskpaneId>
-                    <SourceLocation resid="TaskpaneUrl" />
-                  </Action>
-                </Control>
-              </Group>
-            </OfficeTab>
-          </ExtensionPoint>
-        </DesktopFormFactor>
-      </Host>
-      <Host xsi:type="Presentation">
         <DesktopFormFactor>
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <OfficeTab id="TabHome">

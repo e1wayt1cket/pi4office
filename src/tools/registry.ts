@@ -80,8 +80,7 @@ function resolveCoreToolNames(appType: OfficeAppType): readonly CoreToolName[] {
     case "excel":
       return [...SHARED_CORE_TOOL_NAMES, ...EXCEL_CORE_TOOL_NAMES];
     case "word":
-    case "powerpoint":
-      // Word and PowerPoint start with shared tools only;
+      // Word starts with shared tools only;
       // app-specific tools are registered separately.
       return SHARED_CORE_TOOL_NAMES;
     default:

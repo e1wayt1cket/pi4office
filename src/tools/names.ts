@@ -21,7 +21,7 @@ export const CORE_TOOL_NAMES = [
 
 export type CoreToolName = (typeof CORE_TOOL_NAMES)[number];
 
-/** Core tools shared across all Office app types (Excel, Word, PowerPoint). */
+/** Core tools shared across all Office app types (Excel, Word). */
 export const SHARED_CORE_TOOL_NAMES: readonly CoreToolName[] = [
   "instructions",
   "conventions",

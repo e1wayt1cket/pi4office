@@ -77,7 +77,6 @@ function detectOfficeAppType(): OfficeAppType {
     if (typeof req.isSetSupported === "function") {
       if (req.isSetSupported("ExcelApi")) return "excel";
       if (req.isSetSupported("WordApi")) return "word";
-      if (req.isSetSupported("PowerPointApi")) return "powerpoint";
     }
 
     // Fallback: check host string from Office.initialize or onReady
@@ -86,7 +85,6 @@ function detectOfficeAppType(): OfficeAppType {
       const host = officeHost.toLowerCase();
       if (host === "excel" || host === "workbook") return "excel";
       if (host === "word" || host === "document") return "word";
-      if (host === "powerpoint" || host === "presentation") return "powerpoint";
     }
 
     return "unknown";
@@ -98,7 +96,6 @@ function detectOfficeAppType(): OfficeAppType {
 const OFFICE_APP_DISPLAY_NAMES: Record<OfficeAppType, string> = {
   excel: "Microsoft Excel",
   word: "Microsoft Word",
-  powerpoint: "Microsoft PowerPoint",
   unknown: "Microsoft Office",
 };
 

@@ -7,7 +7,7 @@ import type { WorkbookContext } from "./workbook-context.js";
 
 export type SpreadsheetHostKind = "office" | "wps" | "browser";
 
-export type OfficeAppType = "excel" | "word" | "powerpoint" | "unknown";
+export type OfficeAppType = "excel" | "word" | "unknown";
 
 export interface SpreadsheetHostReadyInfo {
   kind: SpreadsheetHostKind;
