@@ -4,6 +4,8 @@
   "description": "Open-source, multi-model AI sidebar add-in for Microsoft Office (Excel, Word). Powered by Pi.",
   "type": "module",
   "scripts": {
+    "start": "start.bat",
+    "stop": "stop.bat",
     "dev": "vite --port 3141",
     "dev:portless": "portless pi-excel vite",
     "build": "vite build",
