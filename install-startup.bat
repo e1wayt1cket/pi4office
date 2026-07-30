@@ -2,60 +2,59 @@
 chcp 65001 >nul
 cd /d "%~dp0"
 
-set "STARTUP_DIR=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"
-set "VBS_SRC=%~dp0dev-server.vbs"
-set "LNK_DST=%STARTUP_DIR%\pi4office-dev-server.lnk"
+:: Auto-elevate to admin
+net session >nul 2>&1
+if errorlevel 1 (
+    echo Requesting administrator permission...
+    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+    exit /b
+)
 
 echo ============================================
 echo   Pi for Office — One-Click Install
 echo ============================================
 echo.
 
-:: ── Step 1: Auto-start registration ──
-echo [1/3] Registering dev server auto-start...
-powershell -NoProfile -Command ^
-  "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('%LNK_DST%'); $s.TargetPath = '%VBS_SRC%'; $s.WorkingDirectory = '%~dp0'; $s.IconLocation = 'shell32.dll,13'; $s.Save()"
-
+:: ── Step 1: Create scheduled task for auto-start ──
+echo [1/3] Registering background auto-start...
+schtasks /Create /SC ONLOGON /TN "Pi4OfficeDevServer" /TR "\"%~dp0dev-server.bat\"" /F /RL HIGHEST /DELAY 0000:30 >nul 2>&1
 if errorlevel 1 (
-    echo [FAIL] Could not create startup shortcut.
+    echo [FAIL] Could not register scheduled task.
+    echo        Try right-clicking this file and "Run as Administrator".
     pause
     exit /b 1
 )
-echo       Done. Dev server will auto-start on login.
+echo [OK] Dev server will auto-start on every login.
 
-:: ── Step 2: Start dev server now ──
+:: ── Step 2: Start server now ──
 echo.
-echo [2/3] Starting dev server...
-cscript //Nologo "%~dp0dev-server.vbs"
+echo [2/3] Starting dev server now...
+call "%~dp0dev-server.bat"
 
 :: Wait for server to be ready
+echo Waiting for server...
 :wait_loop
 timeout /t 2 /nobreak >nul
-curl -s -o NUL https://localhost:3141/src/taskpane.html -k 2>nul
+powershell -NoProfile -Command ^
+  "try { Invoke-WebRequest -Uri 'https://localhost:3141/src/taskpane.html' -TimeoutSec 3 -UseBasicParsing -SkipCertificateCheck; exit 0 } catch { exit 1 }" >nul 2>&1
 if errorlevel 1 goto wait_loop
-echo       Server ready.
+echo [OK] Server ready at https://localhost:3141
 
-:: ── Step 3: Sideload into Excel and Word ──
+:: ── Step 3: Sideload into Excel ──
 echo.
-echo [3/3] Sideloading add-in into Excel and Word...
-echo       (Office will open — this registers the add-in permanently)
-echo.
-
-echo --- Excel ---
+echo [3/3] Sideloading add-in into Excel...
+echo       (Excel will open — this registers the add-in permanently)
 npx office-addin-debugging start manifest.xml desktop --app excel
-
-echo.
-echo --- Word ---
-npx office-addin-debugging start manifest.xml desktop --app word
 
 echo.
 echo ============================================
 echo   Install complete!
 echo.
-echo   What happens now:
-echo     - Dev server starts automatically on every login
-echo     - Open Excel or Word, click "Open Pi" to use
+echo   From now on:
+echo     - Dev server auto-starts at login (invisible)
+echo     - Open Excel/Word, click "Open Pi" to use
 echo.
-echo   To uninstall: double-click uninstall-startup.bat
+echo   To uninstall: right-click uninstall-startup.bat
+echo                 and "Run as Administrator"
 echo ============================================
 pause
