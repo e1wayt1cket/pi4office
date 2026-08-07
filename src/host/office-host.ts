@@ -11,6 +11,7 @@ import {
   type WorkbookContext,
 } from "./workbook-context.js";
 import type {
+  OfficeAppType,
   SpreadsheetHost,
   SpreadsheetHostReadyCallback,
   SpreadsheetHostReadyInfo,
@@ -57,13 +58,51 @@ function fromOfficeReadyInfo(info: OfficeReadyInfoLike): SpreadsheetHostReadyInf
     kind: "office",
     nativeHost: nativeValueToString(info.host),
     nativePlatform: nativeValueToString(info.platform),
+    appType: detectOfficeAppType(),
     reason: "office-ready",
   };
 }
 
+function detectOfficeAppType(): OfficeAppType {
+  try {
+    const office = Reflect.get(globalThis, "Office");
+    if (!isHostOfficeHostPayloadShape(office)) return "unknown";
+
+    const ctx = office.context;
+    if (!isHostOfficeHostPayloadShape(ctx)) return "unknown";
+
+    const req = ctx.requirements;
+    if (!isHostOfficeHostPayloadShape(req)) return "unknown";
+
+    if (typeof req.isSetSupported === "function") {
+      if (req.isSetSupported("ExcelApi")) return "excel";
+      if (req.isSetSupported("WordApi")) return "word";
+    }
+
+    // Fallback: check host string from Office.initialize or onReady
+    const officeHost = Reflect.get(office, "host") as string | undefined;
+    if (typeof officeHost === "string") {
+      const host = officeHost.toLowerCase();
+      if (host === "excel" || host === "workbook") return "excel";
+      if (host === "word" || host === "document") return "word";
+    }
+
+    return "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+const OFFICE_APP_DISPLAY_NAMES: Record<OfficeAppType, string> = {
+  excel: "Microsoft Excel",
+  word: "Microsoft Word",
+  unknown: "Microsoft Office",
+};
+
 export class OfficeHost implements SpreadsheetHost {
   readonly kind = "office";
-  readonly displayName = "Microsoft Excel";
+  readonly appType: OfficeAppType = detectOfficeAppType();
+  readonly displayName = OFFICE_APP_DISPLAY_NAMES[this.appType];
   readonly sessionStorage: SpreadsheetHostSessionStorage = settingsBackedSessionStorage;
 
   whenReady(): Promise<SpreadsheetHostReadyInfo> {

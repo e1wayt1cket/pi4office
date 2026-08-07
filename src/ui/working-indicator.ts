@@ -1,5 +1,5 @@
 /**
- * Pi for Excel — Working indicator with rotating hints and whimsical status.
+ * Pi for Office — Working indicator with rotating hints and whimsical status.
  *
  * Shows while the agent is streaming. Two independently rotating texts:
  * - Left: whimsical "working" phrases (rotate every ~6s)

@@ -15,7 +15,7 @@ import {
   type SyncContext,
   type UsedRangeSource,
 } from "./structure-common.js";
-import type { RecoveryModifyStructureState, RecoveryStructureValueRangeState } from "./types.js";
+import type { RecoveryModifyStructureState, RecoveryStructureValueRangeState } from "../recovery-states.js";
 
 export {
   columnNumberToLetter,

@@ -2,7 +2,7 @@
 /**
  * Dev-only background verification bridge for real Excel taskpanes.
  *
- * The real pi-for-excel taskpane initiates outbound HTTPS long-poll requests to
+ * The real pi4office taskpane initiates outbound HTTPS long-poll requests to
  * this loopback server. Agents send commands to the server; the server queues
  * them for the taskpane and returns the taskpane's result. This avoids raw GUI
  * input and lets verification run while Excel stays in the background.

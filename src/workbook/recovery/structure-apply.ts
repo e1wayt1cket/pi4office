@@ -18,7 +18,7 @@ import {
 import type {
   RecoveryModifyStructureState,
   RecoveryStructureValueRangeState,
-} from "./types.js";
+} from "../recovery-states.js";
 
 async function loadSheetById(
   context: Excel.RequestContext,

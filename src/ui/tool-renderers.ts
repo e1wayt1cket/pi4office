@@ -1,5 +1,5 @@
 /**
- * Tool renderers for Pi-for-Excel.
+ * Tool renderers for Pi for Office.
  *
  * Renders Excel tool calls as compact, collapsed-by-default cards with
  * human-readable descriptions. Expand to see raw Input/Output.

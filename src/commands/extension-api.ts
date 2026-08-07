@@ -1,5 +1,5 @@
 /**
- * Extension API for Pi for Excel.
+ * Extension API for Pi for Office.
  *
  * Extensions are ES modules that export an `activate(api)` function.
  * They run in the same webview sandbox — no Node.js APIs.

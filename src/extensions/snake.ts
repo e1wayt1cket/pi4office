@@ -1,5 +1,5 @@
 /**
- * Snake game extension for Pi for Excel.
+ * Snake game extension for Pi for Office.
  * Renders as an inline widget above the input — messages stay visible above.
  */
 
@@ -110,14 +110,19 @@ export function activate(api: ExcelExtensionAPI): void {
         );
       }
 
+      function endGame(): void {
+        gameOver = true;
+        clearInterval(interval);
+        draw();
+        updateHeader();
+      }
+
       function tick(): void {
         if (gameOver) return;
         dir = nextDir;
         const head = snake[0];
         if (head === undefined) {
-          gameOver = true;
-          draw();
-          updateHeader();
+          endGame();
           return;
         }
 
@@ -128,9 +133,7 @@ export function activate(api: ExcelExtensionAPI): void {
         const nh = moves[dir];
 
         if (nh.x < 0 || nh.x >= COLS || nh.y < 0 || nh.y >= ROWS || snake.some(s => s.x === nh.x && s.y === nh.y)) {
-          gameOver = true;
-          draw();
-          updateHeader();
+          endGame();
           return;
         }
 

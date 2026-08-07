@@ -437,5 +437,5 @@ void test("WPS host wiring keeps core metadata stable and registers execute_wps_
   );
 
   const registrySource = await readFile(new URL("../src/tools/index.ts", import.meta.url), "utf8");
-  assert.match(registrySource, /hostKind === "wps" \? \[createExecuteWpsJsTool\(\)\] : \[\]/u);
+  assert.match(registrySource, /if \(hostKind === "wps"\) \{\s*tools\.push\(createExecuteWpsJsTool\(\)\);\s*\}/u);
 });

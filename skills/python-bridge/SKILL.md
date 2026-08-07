@@ -28,7 +28,7 @@ The Python bridge gives Pi access to native Python on the user's machine. It is 
 ### 1. Start the bridge
 
 ```bash
-npx pi-for-excel-python-bridge
+npx pi4office-python-bridge
 ```
 
 This defaults to **real execution mode** on `https://localhost:3340`.
@@ -79,7 +79,7 @@ The first time Python runs through the native bridge, Pi will ask for explicit u
 
 ## Troubleshooting
 
-- **Falls back to Pyodide unexpectedly** — the bridge process isn't running. Start it with `npx pi-for-excel-python-bridge`.
+- **Falls back to Pyodide unexpectedly** — the bridge process isn't running. Start it with `npx pi4office-python-bridge`.
 - **Import errors on Pyodide** — the package likely has C extensions. Set up the native bridge.
 - **LibreOffice convert fails** — ensure `soffice` is on PATH. Install with `brew install --cask libreoffice` (macOS).
 - **CORS/cert errors** — visit `https://localhost:3340` in your browser and accept the certificate.

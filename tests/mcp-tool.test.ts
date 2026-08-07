@@ -194,7 +194,7 @@ void test("mcp reports proxy-down error when proxy transport is unreachable", as
   const text = result.content[0]?.type === "text" ? result.content[0].text : "";
 
   assert.match(text, /local CORS proxy is not running/i);
-  assert.match(text, /npx pi-for-excel-proxy/i);
+  assert.match(text, /npx pi4office-proxy/i);
   assert.match(text, /Do not retry/i);
 
   const details = result.details as {

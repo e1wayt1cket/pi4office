@@ -3,7 +3,7 @@
 import { excelRun, getRange } from "../../excel/helpers.js";
 import { firstCellAddress } from "./address.js";
 import { cloneRecoveryCommentThreadState } from "./clone.js";
-import type { RecoveryCommentThreadState } from "./types.js";
+import type { RecoveryCommentThreadState } from "../recovery-states.js";
 
 function emptyCommentThreadState(): RecoveryCommentThreadState {
   return {

@@ -23,7 +23,7 @@ export function resolveDefaultProxyUrl(raw: DynamicValue): string {
   if (candidate.length === 0) return DEFAULT_LOCAL_PROXY_URL;
 
   if (!/^https:\/\//i.test(candidate)) {
-    console.warn(`[pi-for-excel] Ignoring VITE_PI_DEFAULT_PROXY_URL (must be https://): ${candidate}`);
+    console.warn(`[pi4office] Ignoring VITE_PI_DEFAULT_PROXY_URL (must be https://): ${candidate}`);
     return DEFAULT_LOCAL_PROXY_URL;
   }
 
@@ -31,7 +31,7 @@ export function resolveDefaultProxyUrl(raw: DynamicValue): string {
     // Validate URL shape; result unused.
     new URL(candidate);
   } catch {
-    console.warn(`[pi-for-excel] Ignoring VITE_PI_DEFAULT_PROXY_URL (not a valid URL): ${candidate}`);
+    console.warn(`[pi4office] Ignoring VITE_PI_DEFAULT_PROXY_URL (not a valid URL): ${candidate}`);
     return DEFAULT_LOCAL_PROXY_URL;
   }
 
@@ -49,7 +49,7 @@ export const DEFAULT_PROXY_URL = resolveDefaultProxyUrl(
 
 /**
  * True when this build's default proxy is a remote (org/central) proxy.
- * UI copy uses this to swap local-helper instructions ("run npx pi-for-excel-proxy")
+ * UI copy uses this to swap local-helper instructions ("run npx pi4office-proxy")
  * for org guidance ("contact IT / check settings").
  */
 export const DEFAULT_PROXY_IS_REMOTE = !isLoopbackProxyUrl(DEFAULT_PROXY_URL);
@@ -61,11 +61,11 @@ export const DEFAULT_PROXY_IS_REMOTE = !isLoopbackProxyUrl(DEFAULT_PROXY_URL);
  * otherwise the helper will return 403 and OAuth preflight checks will fail.
  */
 export const PROXY_REACHABILITY_TARGET_URL = "https://github.com";
-export const PROXY_HEALTH_HEADER = "x-pi-for-excel-proxy";
-export const CODEX_WEBSOCKET_BRIDGE_HEADER = "x-pi-for-excel-codex-websocket-bridge";
+export const PROXY_HEALTH_HEADER = "x-pi4office-proxy";
+export const CODEX_WEBSOCKET_BRIDGE_HEADER = "x-pi4office-codex-websocket-bridge";
 
 export const PROXY_HELPER_DOCS_URL =
-  "https://github.com/tmustier/pi-for-excel/blob/main/docs/install.md#oauth-logins-and-cors-proxy";
+  "https://github.com/tmustier/pi4office/blob/main/docs/install.md#oauth-logins-and-cors-proxy";
 
 export function normalizeProxyUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");

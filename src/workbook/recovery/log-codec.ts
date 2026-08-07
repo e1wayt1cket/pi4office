@@ -1,6 +1,4 @@
-function isWorkbookRecoveryLogCodecPayloadShape(value: DynamicValue): value is DynamicObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+import { defaultCreateId, isDictionaryValue } from "./helpers.js";
 
 /**
  * Codec helpers for persisted workbook recovery snapshots.
@@ -22,7 +20,7 @@ import {
   type RecoveryStructureValueRangeState,
 } from "../recovery-states.js";
 import { cloneGrid, gridStats } from "./grid.js";
-import { estimateModifyStructureCellCount } from "./structure-state.js";
+import { estimateModifyStructureCellCount, isRecoverySheetVisibility } from "./structure-common.js";
 import type {
   WorkbookRecoverySnapshot,
   WorkbookRecoverySnapshotKind,
@@ -49,19 +47,6 @@ export type PersistedWorkbookRecoverySnapshot =
 export interface PersistedWorkbookRecoveryPayload {
   version: 1;
   snapshots: PersistedWorkbookRecoverySnapshot[];
-}
-
-function defaultCreateId(): string {
-  const randomUuid = globalThis.crypto?.randomUUID;
-  if (typeof randomUuid === "function") {
-    return randomUuid.call(globalThis.crypto);
-  }
-
-  const randomChunk = Math.floor(Math.random() * 1_000_000)
-    .toString(36)
-    .padStart(4, "0");
-
-  return `checkpoint_${Date.now().toString(36)}_${randomChunk}`;
 }
 
 function isWorkbookRecoveryToolName(value: DynamicValue): value is WorkbookRecoveryToolName {
@@ -94,7 +79,7 @@ function parseWorkbookRecoverySnapshotKind(value: DynamicValue): WorkbookRecover
 }
 
 function isRecoveryFormatSelection(value: DynamicValue): value is RecoveryFormatRangeState["selection"] {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   const keys: Array<keyof RecoveryFormatRangeState["selection"]> = [
     "numberFormat",
@@ -143,7 +128,7 @@ function isStringList(value: DynamicValue): value is string[] {
 }
 
 function isRecoveryFormatBorderState(value: DynamicValue): value is RecoveryFormatBorderState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   return (
     typeof value.style === "string" &&
@@ -153,7 +138,7 @@ function isRecoveryFormatBorderState(value: DynamicValue): value is RecoveryForm
 }
 
 function isRecoveryFormatAreaState(value: DynamicValue): value is RecoveryFormatRangeState["areas"][number] {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (typeof value.address !== "string") return false;
   if (typeof value.rowCount !== "number") return false;
   if (typeof value.columnCount !== "number") return false;
@@ -196,7 +181,7 @@ function isRecoveryFormatAreaState(value: DynamicValue): value is RecoveryFormat
 }
 
 function isRecoveryFormatRangeState(value: DynamicValue): value is RecoveryFormatRangeState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryFormatSelection(value.selection)) return false;
   if (!Array.isArray(value.areas) || !value.areas.every((area) => isRecoveryFormatAreaState(area))) return false;
   if (typeof value.cellCount !== "number") return false;
@@ -204,16 +189,12 @@ function isRecoveryFormatRangeState(value: DynamicValue): value is RecoveryForma
   return true;
 }
 
-function isRecoverySheetVisibility(value: DynamicValue): value is "Visible" | "Hidden" | "VeryHidden" {
-  return value === "Visible" || value === "Hidden" || value === "VeryHidden";
-}
-
 function isPositiveInteger(value: DynamicValue): value is number {
   return typeof value === "number" && Number.isInteger(value) && value > 0;
 }
 
 function isRecoveryStructureValueRangeState(value: DynamicValue): value is RecoveryStructureValueRangeState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) {
+  if (!isDictionaryValue(value)) {
     return false;
   }
 
@@ -234,7 +215,7 @@ function isRecoveryStructureValueRangeState(value: DynamicValue): value is Recov
 }
 
 function isRecoveryModifyStructureState(value: DynamicValue): value is RecoveryModifyStructureState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   if (value.kind === "sheet_name") {
     return typeof value.sheetId === "string" && typeof value.name === "string";
@@ -308,7 +289,7 @@ function isRecoveryModifyStructureState(value: DynamicValue): value is RecoveryM
 }
 
 function isRecoveryCommentThreadState(value: DynamicValue): value is RecoveryCommentThreadState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (typeof value.exists !== "boolean") return false;
   if (typeof value.content !== "string") return false;
   if (typeof value.resolved !== "boolean") return false;
@@ -318,17 +299,17 @@ function isRecoveryCommentThreadState(value: DynamicValue): value is RecoveryCom
 }
 
 function isRecoveryChartTitleState(value: DynamicValue): boolean {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   return typeof value.text === "string" && typeof value.visible === "boolean";
 }
 
 function isRecoveryChartLegendState(value: DynamicValue): boolean {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   return typeof value.position === "string" && typeof value.visible === "boolean";
 }
 
 function isRecoveryChartPositionState(value: DynamicValue): boolean {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   return (
     typeof value.top === "number" &&
     typeof value.left === "number" &&
@@ -338,7 +319,7 @@ function isRecoveryChartPositionState(value: DynamicValue): boolean {
 }
 
 function isRecoveryChartState(value: DynamicValue): value is RecoveryChartState {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   if (value.kind === "chart_absent") {
     return (
@@ -365,7 +346,7 @@ function isRecoveryChartState(value: DynamicValue): value is RecoveryChartState 
 }
 
 function parseWorkbookRecoverySnapshot(value: DynamicValue): WorkbookRecoverySnapshot | null {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   if (!isWorkbookRecoveryToolName(value.toolName)) return null;
   if (typeof value.toolCallId !== "string") return null;
@@ -432,7 +413,7 @@ function parseWorkbookRecoverySnapshot(value: DynamicValue): WorkbookRecoverySna
     return null;
   }
 
-  const id = typeof value.id === "string" ? value.id : defaultCreateId();
+  const id = typeof value.id === "string" ? value.id : defaultCreateId("checkpoint");
   const at = typeof value.at === "number" ? value.at : Date.now();
 
   const cellCountFromGrid = gridStats(beforeValues, beforeFormulas).cellCount;
@@ -500,7 +481,7 @@ export function parsePersistedSnapshots(
   payload: DynamicValue,
   options: ParsePersistedSnapshotsOptions,
 ): WorkbookRecoverySnapshot[] {
-  if (!isWorkbookRecoveryLogCodecPayloadShape(payload)) return [];
+  if (!isDictionaryValue(payload)) return [];
 
   const snapshotsRaw = payload.snapshots;
   if (!Array.isArray(snapshotsRaw)) return [];

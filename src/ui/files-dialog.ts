@@ -372,11 +372,7 @@ function createEmptyState(onUpload: () => void): HTMLDivElement {
   return empty;
 }
 
-function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-  const out = new ArrayBuffer(bytes.byteLength);
-  new Uint8Array(out).set(bytes);
-  return out;
-}
+import { toArrayBuffer } from "../utils/bytes.js";
 
 function createWorkbookTagCallout(workbookTag: WorkspaceFileWorkbookTag): HTMLDivElement {
   const strong = document.createElement("strong");

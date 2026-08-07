@@ -20,7 +20,7 @@ type InitializedAppStorage = {
   backend: IndexedDBStorageBackend;
 };
 
-export function initAppStorage(dbName = "pi-for-excel"): InitializedAppStorage {
+export function initAppStorage(dbName = "pi4office"): InitializedAppStorage {
   const settings = new SettingsStore();
   const providerKeys = new ProviderKeysStore();
   const sessions = new SessionsStore();

@@ -1,4 +1,4 @@
-import type { RecoveryFormatRangeState } from "./types.js";
+import type { RecoveryFormatRangeState } from "../recovery-states.js";
 
 function normalizeRecoveryAddress(address: string): string {
   return address.trim();

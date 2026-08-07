@@ -14,6 +14,7 @@ import type {
 
 export class BrowserHost implements SpreadsheetHost {
   readonly kind = "browser";
+  readonly appType = "unknown";
   readonly displayName = "Browser";
   readonly sessionStorage: SpreadsheetHostSessionStorage = settingsBackedSessionStorage;
 
@@ -22,6 +23,7 @@ export class BrowserHost implements SpreadsheetHost {
       kind: "browser",
       nativeHost: null,
       nativePlatform: null,
+      appType: "unknown",
       reason: "browser",
     });
   }
@@ -34,6 +36,7 @@ export class BrowserHost implements SpreadsheetHost {
         kind: "browser",
         nativeHost: null,
         nativePlatform: null,
+        appType: "unknown",
         reason: "browser",
       });
     });

@@ -17,7 +17,7 @@ import type {
   RecoveryFormatSelection,
   RecoveryModifyStructureState,
   RecoveryStructureValueRangeState,
-} from "./types.js";
+} from "../recovery-states.js";
 
 function cloneRecoveryConditionalDataBarRule(rule: RecoveryConditionalDataBarRule): RecoveryConditionalDataBarRule {
   const cloned: RecoveryConditionalDataBarRule = {

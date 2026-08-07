@@ -516,8 +516,8 @@ test("proxy /healthz responds without an Origin header and never proxies", async
 
   const health = await fetch(`http://127.0.0.1:${proxy.port}/healthz`);
   assert.equal(health.status, 200);
-  assert.equal(health.headers.get("x-pi-for-excel-proxy"), "1");
-  assert.equal(health.headers.get("x-pi-for-excel-codex-websocket-bridge"), "1");
+  assert.equal(health.headers.get("x-pi4office-proxy"), "1");
+  assert.equal(health.headers.get("x-pi4office-codex-websocket-bridge"), "1");
   assert.equal(await health.text(), "ok");
 
   const browserHealth = await fetch(`http://127.0.0.1:${proxy.port}/healthz`, {
@@ -526,10 +526,10 @@ test("proxy /healthz responds without an Origin header and never proxies", async
   assert.equal(browserHealth.status, 200);
   assert.equal(browserHealth.headers.get("access-control-allow-origin"), ORIGIN);
   const exposedHeaders = browserHealth.headers.get("access-control-expose-headers")?.toLowerCase() ?? "";
-  assert.match(exposedHeaders, /x-pi-for-excel-proxy/);
-  assert.match(exposedHeaders, /x-pi-for-excel-codex-websocket-bridge/);
-  assert.equal(browserHealth.headers.get("x-pi-for-excel-proxy"), "1");
-  assert.equal(browserHealth.headers.get("x-pi-for-excel-codex-websocket-bridge"), "1");
+  assert.match(exposedHeaders, /x-pi4office-proxy/);
+  assert.match(exposedHeaders, /x-pi4office-codex-websocket-bridge/);
+  assert.equal(browserHealth.headers.get("x-pi4office-proxy"), "1");
+  assert.equal(browserHealth.headers.get("x-pi4office-codex-websocket-bridge"), "1");
   assert.equal(await browserHealth.text(), "ok");
 
   // Query strings (including ?url=) must not turn /healthz into a proxy path.
@@ -595,12 +595,12 @@ test("proxy auto-selects a random port when default 3003 is busy and PORT is not
 
   const { stdout, stderr } = second.getLogs();
   const listeningLogCount = stdout.match(/CORS proxy listening on/g)?.length ?? 0;
-  const settingsHintCount = stdout.match(/Update Pi for Excel \/settings → Proxy URL/g)?.length ?? 0;
+  const settingsHintCount = stdout.match(/Update Pi for Office \/settings → Proxy URL/g)?.length ?? 0;
   assert.equal(listeningLogCount, 1);
   assert.equal(settingsHintCount, 1);
   assert.match(stderr, /Port 3003 is already in use; choosing a random available port instead\./);
   assert.match(stdout, new RegExp(`CORS proxy listening on http://127\\.0\\.0\\.1:${second.port}`));
-  assert.match(stdout, /Update Pi for Excel \/settings → Proxy URL to http:\/\/127\.0\.0\.1:\d+/);
+  assert.match(stdout, /Update Pi for Office \/settings → Proxy URL to http:\/\/127\.0\.0\.1:\d+/);
 });
 
 test("proxy boots with ALLOWED_CLIENT_CIDRS, warns, and still serves loopback", async (t) => {

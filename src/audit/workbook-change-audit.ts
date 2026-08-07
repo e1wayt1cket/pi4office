@@ -1,6 +1,4 @@
-function isAuditWorkbookChangeAuditPayloadShape(value: DynamicValue): value is DynamicObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+import { defaultCreateId, isDictionaryValue } from "../workbook/recovery/helpers.js";
 
 /**
  * Workbook mutation audit log (local, persisted in SettingsStore when available).
@@ -80,21 +78,8 @@ function defaultNow(): number {
   return Date.now();
 }
 
-function defaultCreateId(): string {
-  const randomUuid = globalThis.crypto?.randomUUID;
-  if (typeof randomUuid === "function") {
-    return randomUuid.call(globalThis.crypto);
-  }
-
-  const randomChunk = Math.floor(Math.random() * 1_000_000)
-    .toString(36)
-    .padStart(4, "0");
-
-  return `change_${Date.now().toString(36)}_${randomChunk}`;
-}
-
 function isSettingsStoreLike(value: DynamicValue): value is SettingsStoreLike {
-  if (!isAuditWorkbookChangeAuditPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   return (
     typeof value.get === "function" &&
@@ -107,7 +92,7 @@ async function defaultGetSettingsStore(): Promise<SettingsStoreLike | null> {
   try {
     const storageModule = await import("../storage/local/app-storage.js");
     const appStorage = storageModule.getAppStorage();
-    const settings = isAuditWorkbookChangeAuditPayloadShape(appStorage) ? appStorage.settings : null;
+    const settings = isDictionaryValue(appStorage) ? appStorage.settings : null;
     return isSettingsStoreLike(settings) ? settings : null;
   } catch {
     return null;
@@ -131,7 +116,7 @@ function isWorkbookAuditToolName(value: DynamicValue): value is WorkbookAuditToo
 }
 
 function isWorkbookCellChange(value: DynamicValue): value is WorkbookCellChange {
-  if (!isAuditWorkbookChangeAuditPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   const beforeFormula = value.beforeFormula;
   const afterFormula = value.afterFormula;
@@ -146,7 +131,7 @@ function isWorkbookCellChange(value: DynamicValue): value is WorkbookCellChange 
 }
 
 function parseAuditEntry(value: DynamicValue): WorkbookChangeAuditEntry | null {
-  if (!isAuditWorkbookChangeAuditPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   if (!isWorkbookAuditToolName(value.toolName)) return null;
   if (typeof value.toolCallId !== "string") return null;
@@ -154,7 +139,7 @@ function parseAuditEntry(value: DynamicValue): WorkbookChangeAuditEntry | null {
   if (typeof value.changedCount !== "number") return null;
   if (!Array.isArray(value.changes) || !value.changes.every((item) => isWorkbookCellChange(item))) return null;
 
-  const id = typeof value.id === "string" ? value.id : defaultCreateId();
+  const id = typeof value.id === "string" ? value.id : defaultCreateId("change");
   const at = typeof value.at === "number" ? value.at : Date.now();
 
   const rawExecutionMode = value.executionMode;
@@ -180,7 +165,7 @@ function parseAuditEntry(value: DynamicValue): WorkbookChangeAuditEntry | null {
 }
 
 function parsePersistedEntries(payload: DynamicValue): WorkbookChangeAuditEntry[] {
-  if (!isAuditWorkbookChangeAuditPayloadShape(payload)) return [];
+  if (!isDictionaryValue(payload)) return [];
 
   const entriesRaw = payload.entries;
   if (!Array.isArray(entriesRaw)) return [];
@@ -216,7 +201,7 @@ export class WorkbookChangeAuditLog {
       getSettingsStore: dependencies.getSettingsStore ?? defaultGetSettingsStore,
       getWorkbookContext: dependencies.getWorkbookContext ?? getWorkbookContext,
       now: dependencies.now ?? defaultNow,
-      createId: dependencies.createId ?? defaultCreateId,
+      createId: dependencies.createId ?? (() => defaultCreateId("change")),
     };
   }
 

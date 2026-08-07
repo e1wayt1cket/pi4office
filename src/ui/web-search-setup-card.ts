@@ -29,7 +29,7 @@ import { AlertTriangle, Check, Copy, Search, lucide } from "./lucide-icons.js";
 import { showToast } from "./toast.js";
 import { t } from "../language/index.js";
 
-const PROXY_COMMAND = "npx pi-for-excel-proxy";
+const PROXY_COMMAND = "npx pi4office-proxy";
 
 interface ProxyStepOptions {
   stepNumber: number | null;

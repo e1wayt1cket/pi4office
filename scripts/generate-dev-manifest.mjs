@@ -99,7 +99,7 @@ export function renderDevManifest(xml, origin) {
 }
 
 function fail(message) {
-  console.error(`[pi-for-excel] ${message}`);
+  console.error(`[pi4office] ${message}`);
   process.exit(1);
 }
 
@@ -139,7 +139,7 @@ if (isCurrentModuleEntrypoint()) {
   }
 
   fs.writeFileSync(outPath, replaced);
-  console.log(`[pi-for-excel] Wrote ${outPath} (${resolved.origin}, from ${resolved.source})`);
-  console.log(`[pi-for-excel] Validate with: node scripts/validate-manifest.mjs ${path.basename(outPath)}`);
-  console.log(`[pi-for-excel] Sideload it the same way as manifest.xml — see docs/portless.md`);
+  console.log(`[pi4office] Wrote ${outPath} (${resolved.origin}, from ${resolved.source})`);
+  console.log(`[pi4office] Validate with: node scripts/validate-manifest.mjs ${path.basename(outPath)}`);
+  console.log(`[pi4office] Sideload it the same way as manifest.xml — see docs/portless.md`);
 }

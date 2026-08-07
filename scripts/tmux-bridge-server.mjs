@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Local tmux bridge for Pi for Excel.
+ * Local tmux bridge for Pi for Office.
  *
  * Modes:
  * - stub (default): in-memory session simulator for local development/testing.
@@ -26,7 +26,7 @@ const useHttps = args.has("--https") || process.env.HTTPS === "1" || process.env
 const useHttp = args.has("--http");
 
 if (useHttps && useHttp) {
-  console.error("[pi-for-excel] Invalid args: can't use both --https and --http");
+  console.error("[pi4office] Invalid args: can't use both --https and --http");
   process.exit(1);
 }
 
@@ -36,7 +36,7 @@ const PORT = Number.parseInt(process.env.PORT || "3341", 10);
 const MODE_RAW = (process.env.TMUX_BRIDGE_MODE || "stub").trim().toLowerCase();
 const MODE = MODE_RAW === "tmux" ? "tmux" : MODE_RAW === "stub" ? "stub" : null;
 if (!MODE) {
-  console.error(`[pi-for-excel] Invalid TMUX_BRIDGE_MODE: ${MODE_RAW}. Use "stub" or "tmux".`);
+  console.error(`[pi4office] Invalid TMUX_BRIDGE_MODE: ${MODE_RAW}. Use "stub" or "tmux".`);
   process.exit(1);
 }
 
@@ -56,7 +56,7 @@ const certPath = resolveOptionalEnvPath("PI_FOR_EXCEL_CERT_PATH") ?? path.join(c
 
 const DEFAULT_ALLOWED_ORIGINS = new Set([
   "https://localhost:3141",
-  "https://pi-for-excel.vercel.app",
+  "https://pi4office.vercel.app",
 ]);
 
 const MAX_JSON_BODY_BYTES = 256 * 1024;
@@ -114,7 +114,7 @@ const tmuxCommandTimeoutMs = (() => {
 })();
 
 const socketDir = path.resolve(
-  process.env.TMUX_BRIDGE_SOCKET_DIR || path.join(os.tmpdir(), "pi-for-excel-tmux-bridge"),
+  process.env.TMUX_BRIDGE_SOCKET_DIR || path.join(os.tmpdir(), "pi4office-tmux-bridge"),
 );
 const socketPath = path.resolve(
   process.env.TMUX_BRIDGE_SOCKET_PATH || path.join(socketDir, "tmux.sock"),
@@ -874,9 +874,9 @@ const backend = (() => {
     return MODE === "tmux" ? createRealTmuxBackend() : createStubBackend();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`[pi-for-excel] Failed to initialize tmux backend: ${message}`);
+    console.error(`[pi4office] Failed to initialize tmux backend: ${message}`);
     console.error(
-      "[pi-for-excel] Install tmux (for example: brew install tmux), " +
+      "[pi4office] Install tmux (for example: brew install tmux), " +
       "or run TMUX_BRIDGE_MODE=stub for simulated mode.",
     );
     process.exit(1);
@@ -955,7 +955,7 @@ const handler = async (req, res) => {
       ? (typeof error.stack === "string" && error.stack.length > 0 ? error.stack : error.message)
       : String(error);
 
-    console.error(`[pi-for-excel] tmux bridge internal error: ${detail}`);
+    console.error(`[pi4office] tmux bridge internal error: ${detail}`);
 
     respondJson(res, 500, {
       ok: false,
@@ -970,7 +970,7 @@ const server = (() => {
   }
 
   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
-    console.error("[pi-for-excel] HTTPS requested but key.pem/cert.pem not found in repo root.");
+    console.error("[pi4office] HTTPS requested but key.pem/cert.pem not found in repo root.");
     console.error("Generate them with mkcert (see README). Example: mkcert localhost");
     process.exit(1);
   }
@@ -986,23 +986,23 @@ const server = (() => {
 
 server.listen(PORT, HOST, () => {
   const scheme = useHttps ? "https" : "http";
-  console.log(`[pi-for-excel] tmux bridge listening on ${scheme}://${HOST}:${PORT}`);
-  console.log(`[pi-for-excel] mode: ${backend.mode}`);
-  console.log(`[pi-for-excel] health: ${scheme}://${HOST}:${PORT}/health`);
-  console.log(`[pi-for-excel] endpoint: ${scheme}://${HOST}:${PORT}/v1/tmux`);
-  console.log(`[pi-for-excel] allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
+  console.log(`[pi4office] tmux bridge listening on ${scheme}://${HOST}:${PORT}`);
+  console.log(`[pi4office] mode: ${backend.mode}`);
+  console.log(`[pi4office] health: ${scheme}://${HOST}:${PORT}/health`);
+  console.log(`[pi4office] endpoint: ${scheme}://${HOST}:${PORT}/v1/tmux`);
+  console.log(`[pi4office] allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
 
   if (authToken) {
-    console.log("[pi-for-excel] auth: bearer token required for POST /v1/tmux");
+    console.log("[pi4office] auth: bearer token required for POST /v1/tmux");
   } else {
-    console.warn("[pi-for-excel] auth: no bearer token configured — any local process on this machine can drive this bridge.");
-    console.warn("[pi-for-excel] recommended: set TMUX_BRIDGE_TOKEN=<secret> and mirror it in Pi via /experimental tmux-bridge-token <secret>");
+    console.warn("[pi4office] auth: no bearer token configured — any local process on this machine can drive this bridge.");
+    console.warn("[pi4office] recommended: set TMUX_BRIDGE_TOKEN=<secret> and mirror it in Pi via /experimental tmux-bridge-token <secret>");
   }
 
   if (backend.mode === "tmux") {
-    console.log(`[pi-for-excel] tmux socket: ${socketPath}`);
+    console.log(`[pi4office] tmux socket: ${socketPath}`);
   } else {
-    console.log("[pi-for-excel] stub mode: commands are simulated and not executed in a real shell.");
-    console.log("[pi-for-excel] use TMUX_BRIDGE_MODE=tmux for real command output.");
+    console.log("[pi4office] stub mode: commands are simulated and not executed in a real shell.");
+    console.log("[pi4office] use TMUX_BRIDGE_MODE=tmux for real command output.");
   }
 });

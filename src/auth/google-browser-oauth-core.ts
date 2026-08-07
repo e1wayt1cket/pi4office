@@ -238,8 +238,8 @@ async function loginGoogleOAuth(
   callbacks.onAuth({
     url: authUrl.toString(),
     instructions:
-      "After sign-in, Pi for Excel will try to capture the localhost callback automatically if the local proxy is running. " +
-      "If it does not continue, copy the full callback URL from the browser address bar and paste it back in Pi for Excel.",
+      "After sign-in, Pi for Office will try to capture the localhost callback automatically if the local proxy is running. " +
+      "If it does not continue, copy the full callback URL from the browser address bar and paste it back in Pi for Office.",
   });
 
   if (callbacks.signal?.aborted) {

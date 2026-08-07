@@ -14,9 +14,11 @@ import {
   captureModifyStructureState,
   captureSheetValueDataRange,
   captureValueDataRange,
+} from "../workbook/recovery/structure-capture.js";
+import {
   columnNumberToLetter,
   isRecoverySheetVisibility,
-} from "../workbook/recovery/structure-state.js";
+} from "../workbook/recovery/structure-common.js";
 import type { RecoveryModifyStructureState, RecoverySheetVisibility } from "../workbook/recovery-states.js";
 import { getErrorMessage } from "../utils/errors.js";
 import type { ModifyStructureDetails } from "./tool-details.js";

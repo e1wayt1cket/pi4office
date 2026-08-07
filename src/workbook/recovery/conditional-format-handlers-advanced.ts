@@ -23,7 +23,7 @@ import {
 import type {
   RecoveryConditionalColorScaleCriterion,
   RecoveryConditionalFormatRule,
-} from "./types.js";
+} from "../recovery-states.js";
 
 type AdvancedConditionalFormatRuleType = Extract<
   RecoveryConditionalFormatRule["type"],

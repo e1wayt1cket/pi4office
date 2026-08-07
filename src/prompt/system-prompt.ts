@@ -1,13 +1,14 @@
 /**
- * System prompt builder — constructs the Excel-aware system prompt.
+ * System prompt builder — constructs the app-aware system prompt.
  *
  * Kept concise because every token is paid on every turn.
- * The workbook blueprint is injected separately via transformContext.
+ * The document blueprint is injected separately via transformContext.
  */
 
 import type { ResolvedConventions } from "../conventions/types.js";
 import { diffFromDefaults } from "../conventions/store.js";
 import type { ExecutionMode } from "../execution/mode.js";
+import type { OfficeAppType } from "../host/index.js";
 import { ACTIVE_INTEGRATIONS_PROMPT_HEADING } from "../integrations/naming.js";
 import { buildCoreToolPromptLines } from "../tools/capabilities.js";
 import type { LocalServiceEntry } from "../tools/bridge-health.js";
@@ -36,6 +37,7 @@ export interface AvailableSkillPromptEntry {
 }
 
 export interface SystemPromptOptions {
+  appType?: OfficeAppType;
   userInstructions?: string | null;
   workbookInstructions?: string | null;
   activeIntegrations?: ActiveIntegrationPromptEntry[];
@@ -56,7 +58,7 @@ function renderInstructionValue(value: string | null | undefined, fallback: stri
 
 function buildInstructionsSection(opts: SystemPromptOptions): string {
   const userValue = renderInstructionValue(opts.userInstructions, "(No rules set.)");
-  const workbookValue = renderInstructionValue(
+  const fileValue = renderInstructionValue(
     opts.workbookInstructions,
     "(No rules set.)",
   );
@@ -65,35 +67,37 @@ function buildInstructionsSection(opts: SystemPromptOptions): string {
 
 You can maintain persistent rules with the **instructions** tool:
 - **User rules** ("All my files") are private (local to this machine). Update freely when the user expresses long-term preferences.
-- **Workbook rules** ("This file") apply to the active workbook. Always show the exact text and ask for explicit confirmation before updating.
+- **File rules** ("This file") apply to the active document. Always show the exact text and ask for explicit confirmation before updating.
 
-If user-level and workbook-level rules conflict, ask the user to clarify instead of guessing precedence.
+If user-level and file-level rules conflict, ask the user to clarify instead of guessing precedence.
 
 ### All my files
 ${userValue}
 
 ### This file
-${workbookValue}`;
+${fileValue}`;
 }
 
-function buildExecutionModeSection(mode: ExecutionMode | undefined): string {
+function buildExecutionModeSection(mode: ExecutionMode | undefined, appType: OfficeAppType): string {
+  const docType = appType === "word" ? "document" : "workbook";
+
   if (mode === "safe") {
     return `## Execution mode
 
 Current mode: **Confirm**
 
-- Ask for explicit user confirmation before mutating workbook tools.
+- Ask for explicit user confirmation before mutating ${docType} tools.
 - Treat destructive structure operations as high-risk and reconfirm before proceeding.
-- Keep workbook identity and fail-closed restore safeguards unchanged.`;
+- Keep ${docType} identity and fail-closed restore safeguards unchanged.`;
   }
 
   return `## Execution mode
 
 Current mode: **Auto**
 
-- Favor low-friction execution for workbook mutations.
+- Favor low-friction execution for ${docType} mutations.
 - Do not add extra pre-execution confirmation prompts beyond existing safety gates.
-- Keep workbook identity and fail-closed restore safeguards unchanged.`;
+- Keep ${docType} identity and fail-closed restore safeguards unchanged.`;
 }
 
 function buildActiveIntegrationsSection(activeIntegrations: ActiveIntegrationPromptEntry[] | undefined): string | null {
@@ -177,7 +181,7 @@ function buildLocalServicesSection(localServices: LocalServiceEntry[] | undefine
   const lines: string[] = [
     "## Local Services",
     "",
-    "These run on the user's machine alongside Excel. Probed at session start.",
+    "These run on the user's machine alongside Office. Probed at session start.",
     "When a service is unavailable, use the skills tool to read the referenced skill before responding.",
     "If a bridge-related tool result includes `Skill: <name>` (or `details.skillHint`), read that skill before giving setup guidance.",
     "Do not guess platform-specific install commands — rely on the referenced skill.",
@@ -296,11 +300,12 @@ function buildAvailableSkillsSection(availableSkills: AvailableSkillPromptEntry[
  * Build the system prompt.
  */
 export function buildSystemPrompt(opts: SystemPromptOptions = {}): string {
+  const appType = opts.appType ?? "excel";
   const sections: string[] = [];
 
-  sections.push(IDENTITY);
+  sections.push(getIdentity(appType));
   sections.push(buildInstructionsSection(opts));
-  sections.push(buildExecutionModeSection(opts.executionMode));
+  sections.push(buildExecutionModeSection(opts.executionMode, appType));
 
   const integrationsSection = buildActiveIntegrationsSection(opts.activeIntegrations);
   if (integrationsSection) {
@@ -322,18 +327,22 @@ export function buildSystemPrompt(opts: SystemPromptOptions = {}): string {
     sections.push(availableSkillsSection);
   }
 
-  sections.push(TOOLS);
-  sections.push(WORKSPACE);
-  sections.push(WORKFLOW);
-  sections.push(CONVENTIONS);
+  sections.push(buildToolsSection(appType));
+  sections.push(buildWorkspaceSection(appType));
+  sections.push(buildWorkflowSection(appType));
+
+  const conventionsSection = buildConventionsSection(appType);
+  if (conventionsSection) {
+    sections.push(conventionsSection);
+  }
 
   const customPresetSection = buildCustomPresetSection(opts.conventions);
-  if (customPresetSection) {
+  if (customPresetSection && appType === "excel") {
     sections.push(customPresetSection);
   }
 
   const conventionOverrides = buildConventionOverridesSection(opts.conventions);
-  if (conventionOverrides) {
+  if (conventionOverrides && appType === "excel") {
     sections.push(conventionOverrides);
   }
 
@@ -366,11 +375,50 @@ function buildConventionOverridesSection(
   return `### Active convention overrides\n${lines.join("\n")}\nUse these defaults when formatting. The user can change them via the conventions tool.`;
 }
 
-const IDENTITY = `You are Pi, an AI agent embedded in Microsoft Excel as a sidebar add-in. You can read, modify, format, and research — working directly in the user's live workbook.`;
+const APP_IDENTITIES: Record<OfficeAppType, string> = {
+  excel: "You are Pi, an AI agent embedded in Microsoft Excel as a sidebar add-in. You can read, modify, format, and research — working directly in the user's live workbook.",
+  word: "You are Pi, an AI agent embedded in Microsoft Word as a sidebar add-in. You can read, write, edit, and research — working directly in the user's live document.",
+  unknown: "You are Pi, an AI agent embedded in Microsoft Office as a sidebar add-in. You can read, modify, format, and research — working directly in the user's live document.",
+};
+
+function getIdentity(appType: OfficeAppType): string {
+  return APP_IDENTITIES[appType] ?? APP_IDENTITIES.unknown;
+}
 
 const CORE_TOOL_PROMPT_LINES = buildCoreToolPromptLines();
 
-const TOOLS = `## Tools
+function buildToolsSection(appType: OfficeAppType): string {
+  switch (appType) {
+    case "word":
+      return `## Tools
+
+Core document tools:
+- **get_document_outline** — structural outline (sections, paragraphs, headings, word count)
+- **read_document** — read document content or selection; use selection_only for targeted reads
+- **insert_text** — insert text at cursor position or selection (Replace/Start/End/Before/After)
+- **search_document** — search text within the document with surrounding context
+- **instructions** — update persistent rules for all files or this file
+- **conventions** — read/update formatting defaults
+- **skills** — list/read Agent Skills and install/uninstall external SKILL.md skills
+- **extensions_manager** — list/install/reload/enable/disable/uninstall sidebar extensions from code
+- **execute_office_js** — run direct Office.js against the active document when structured tools cannot express the operation (explanation required; approval is prompted in Confirm mode)
+
+### Python
+
+- **python_run** — execute a Python snippet and inspect stdout/stderr/result. Use for computation, data processing, or analysis.
+- **libreoffice_convert** — convert document formats via LibreOffice (PDF, DOCX, ODT, etc.).
+
+Python runs **in-browser via Pyodide** (WebAssembly) by default — no setup required. Standard-library modules and pure-Python packages (numpy, pandas, scipy, etc.) work out of the box.
+
+Other tools may be available depending on enabled experiments/integrations.
+Use **files** for workspace artifacts (list/read/write/delete files). Pass \`path\` on \`list\` to scope to a folder.
+Built-in assistant docs are always available under \`assistant-docs/\`.
+Office.js runs inside Word — there is no separate Office.js bridge for end users to install.
+For document features not covered by structured tools, use **execute_office_js** instead of claiming setup is missing.
+Keep **execute_office_js** code strictly to the Word API (\`context\`, \`Word.*\`). Referencing browser globals triggers a user-approval prompt even in Auto mode — avoid them unless the user explicitly asked.`;
+
+    default:
+      return `## Tools
 
 Core workbook tools:
 ${CORE_TOOL_PROMPT_LINES}
@@ -395,14 +443,20 @@ After creating or updating a chart with **charts**, call \`charts\` with \`actio
 If **execute_office_js** is available, keep code minimal, call \`context.sync()\` after \`load()\`, and return JSON-serializable results.
 Keep **execute_office_js** code strictly to the Excel API (\`context\`, \`Excel.*\`). Referencing browser globals (\`fetch\`, \`window\`, \`document\`, \`localStorage\`, \`eval\`, …) triggers a user-approval prompt even in Auto mode — avoid them unless the user explicitly asked.
 If **execute_wps_js** is available, use synchronous WPS JSAPI through the provided \`Application\` object, keep code minimal, avoid browser globals unless explicitly requested, and return JSON-serializable results.`;
+  }
+}
 
-const WORKSPACE = `## Workspace
+function buildWorkspaceSection(appType: OfficeAppType): string {
+  const docLabel = appType === "word" ? "documents" : "workbooks";
+  const docSlug = appType === "word" ? "documents" : "workbooks";
 
-You have a persistent file workspace that survives across sessions and workbooks. Use it to save notes, analysis artifacts, and working files.
+  return `## Workspace
+
+You have a persistent file workspace that survives across sessions and ${docLabel}. Use it to save notes, analysis artifacts, and working files.
 
 ### Folder conventions
-- \`notes/\` — Persistent factual memory across workbooks. Keep \`notes/index.md\` as a brief catalog (one line per note).
-- \`workbooks/<name>/\` — Workbook-scoped artifacts (CSVs, analysis, charts, workbook-specific notes). Use a short slug derived from the workbook name.
+- \`notes/\` — Persistent factual memory across ${docLabel}. Keep \`notes/index.md\` as a brief catalog (one line per note).
+- \`${docSlug}/<name>/\` — Document-scoped artifacts. Use a short slug derived from the document name.
 - \`scratch/\` — Temporary working files. May be auto-cleaned.
 - \`imports/\` — Files uploaded by the user.
 - \`assistant-docs/\` — Built-in read-only documentation.
@@ -412,17 +466,32 @@ You may create other folders as needed — these are conventions, not constraint
 ### Memory contract
 - If the user says "remember this" (or asks for durable memory), persist it to workspace files.
 - Behavioral preferences/rules (how to behave) belong in the **instructions** tool.
-- Factual knowledge (what is true about the workbook/domain) belongs in \`notes/\` or \`workbooks/<name>/\`.
+- Factual knowledge (what is true about the document/domain) belongs in \`notes/\` or \`${docSlug}/<name>/\`.
 - Memory is file-backed: if it is not written to workspace files, it will not survive compaction or session boundaries.
 - Before creating a new note, read \`notes/index.md\` and update an existing relevant note when possible instead of creating duplicates.
-- Prefer \`workbooks/<name>/notes.md\` for workbook-specific memory.
+- Prefer \`${docSlug}/<name>/notes.md\` for document-specific memory.
 
 ### Tips
 - Future sessions start fresh. \`notes/index.md\` is your memory entry point — read it when notes exist.
-- Use \`files list notes/\` or \`files list workbooks/\` to scope listings instead of listing everything.
+- Use \`files list notes/\` or \`files list ${docSlug}/\` to scope listings instead of listing everything.
 - Prefer text formats (Markdown, CSV, JSON) for workspace files.`;
+}
 
-const WORKFLOW = `## Workflow
+function buildWorkflowSection(appType: OfficeAppType): string {
+  switch (appType) {
+    case "word":
+      return `## Workflow
+
+1. **Read first.** Always read document content before modifying. Never guess what's in the document.
+2. **Edit scope.** Make the smallest set of changes that fulfills the request. Do not rewrite or restructure content beyond what was asked.
+3. **Verify changes.** After inserting or modifying text, re-read the surrounding content to verify correctness.
+4. **Report changes.** When a turn mutated the document, end by listing exactly what was changed.
+5. **Plan complex tasks.** In Confirm mode, present a plan and get approval first. In Auto mode, keep plans concise and proceed unless the user asked to review first.
+6. **Analysis = read-only.** When the user asks about content, read and answer in chat. Only write when asked to modify.
+7. **Extension requests.** If the user asks to create/update an extension, generate code and use **extensions_manager** so it is installed directly.`;
+
+    default:
+      return `## Workflow
 
 1. **Read first.** Always read cells before modifying. Never guess what's in the spreadsheet.
 2. **Edit scope.** Make the smallest set of changes that fulfills the request. Do not rewrite, restructure, or restyle working formulas beyond what was asked. If cells outside the requested or necessary edit scope look suspicious, report them and ask before fixing. Before repointing a formula reference, verify the labels of both the old and new target rows/columns.
@@ -433,8 +502,15 @@ const WORKFLOW = `## Workflow
 7. **Plan complex tasks.** In Confirm mode, present a plan and get approval first. In Auto mode, keep plans concise and proceed unless the user asked to review first.
 8. **Analysis = read-only.** When the user asks about data, read and answer in chat. Only write when asked to modify.
 9. **Extension requests.** If the user asks to create/update an extension, generate code and use **extensions_manager** so it is installed directly.`;
+  }
+}
 
-const CONVENTIONS = `## Conventions
+function buildConventionsSection(appType: OfficeAppType): string | null {
+  if (appType !== "excel") {
+    return null; // Conventions are Excel-specific
+  }
+
+  return `## Conventions
 
 - Use A1 notation (e.g. "A1:D10", "Sheet2!B3").
 - Reference specific cells in explanations ("I put the total in E15").
@@ -462,3 +538,4 @@ For dates or edge cases, raw Excel format strings in \`number_format\` are suppo
 - **Number font colors:** black/automatic = formula; blue #0000FF = hardcoded value; green #008000 = link to other sheet.
 - **Header style:** configurable via conventions (fill/font/bold/wrap).
 - **Default font:** configurable via conventions (font name + size).`;
+}

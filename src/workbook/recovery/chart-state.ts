@@ -8,7 +8,7 @@ import type {
   RecoveryChartPresentState,
   RecoveryChartState,
   RecoveryChartTitleState,
-} from "./types.js";
+} from "../recovery-states.js";
 
 interface ChartTarget {
   sheet: Excel.Worksheet;

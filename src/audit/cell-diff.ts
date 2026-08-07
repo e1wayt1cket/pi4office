@@ -3,6 +3,7 @@
  */
 
 import { cellAddress, parseCell, qualifiedAddress } from "../excel/helpers.js";
+import { normalizeFormula } from "../workbook/recovery/grid.js";
 
 const DEFAULT_SAMPLE_LIMIT = 12;
 const DEFAULT_PREVIEW_CHARS = 80;
@@ -36,14 +37,6 @@ function clampPositiveInteger(value: number | undefined, fallback: number): numb
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
   const rounded = Math.floor(value);
   return rounded > 0 ? rounded : fallback;
-}
-
-function normalizeFormula(raw: DynamicValue): string | undefined {
-  if (typeof raw !== "string") return undefined;
-
-  const trimmed = raw.trim();
-  if (!trimmed.startsWith("=")) return undefined;
-  return trimmed;
 }
 
 function serializeComparable(raw: DynamicValue): string {

@@ -588,8 +588,8 @@ export function createOfficeStreamFn(
     if (!proxyUrl) {
       if (needsCodexBridge) {
         throw new Error(
-          "GPT-5.6 Luna currently requires the latest Pi for Excel proxy for ChatGPT WebSocket transport. " +
-          "Enable Proxy in Settings and run: npx -y pi-for-excel-proxy@latest",
+          "GPT-5.6 Luna currently requires the latest Pi for Office proxy for ChatGPT WebSocket transport. " +
+          "Enable Proxy in Settings and run: npx -y pi4office-proxy@latest",
         );
       }
       return modelsRuntime.streamSimple(normalizedModel, effectiveContext, effectiveOptions);
@@ -606,8 +606,8 @@ export function createOfficeStreamFn(
       const bridgeSupported = await proxySupportsCodexWebSocketBridge(validated);
       if (!bridgeSupported) {
         throw new Error(
-          "GPT-5.6 Luna requires a newer Pi for Excel proxy with ChatGPT WebSocket support. " +
-          "Restart with: npx -y pi-for-excel-proxy@latest (central deployments: ask your administrator to upgrade the proxy).",
+          "GPT-5.6 Luna requires a newer Pi for Office proxy with ChatGPT WebSocket support. " +
+          "Restart with: npx -y pi4office-proxy@latest (central deployments: ask your administrator to upgrade the proxy).",
         );
       }
       proxyTransport = "codex-websocket";

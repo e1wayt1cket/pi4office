@@ -6,7 +6,7 @@
  * https://github.com/badlogic/pi-mono). See docs/ui-ownership.md.
  *
  * Schema compatibility invariant: this backend must open the existing
- * "pi-for-excel" database (same store names, key paths, and indices) so
+ * "pi4office" database (same store names, key paths, and indices) so
  * pre-migration user data restores unchanged.
  */
 

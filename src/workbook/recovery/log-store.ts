@@ -1,6 +1,4 @@
-function isWorkbookRecoveryLogStorePayloadShape(value: DynamicValue): value is DynamicObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+import { isDictionaryValue } from "./helpers.js";
 
 /**
  * Persistence helpers for workbook recovery snapshots.
@@ -20,7 +18,7 @@ export interface SettingsStoreLike {
 }
 
 function isSettingsStoreLike(value: DynamicValue): value is SettingsStoreLike {
-  if (!isWorkbookRecoveryLogStorePayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
 
   return (
     typeof value.get === "function" &&
@@ -32,7 +30,7 @@ export async function defaultGetSettingsStore(): Promise<SettingsStoreLike | nul
   try {
     const storageModule = await import("../../storage/local/app-storage.js");
     const appStorage = storageModule.getAppStorage();
-    const settings = isWorkbookRecoveryLogStorePayloadShape(appStorage) ? appStorage.settings : null;
+    const settings = isDictionaryValue(appStorage) ? appStorage.settings : null;
     return isSettingsStoreLike(settings) ? settings : null;
   } catch {
     return null;

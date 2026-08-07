@@ -1,4 +1,5 @@
-import type { RecoveryFormatBorderState } from "./types.js";
+import type { RecoveryFormatBorderState } from "../recovery-states.js";
+import { normalizeOptionalString } from "./conditional-format-normalization.js";
 
 export const RECOVERY_BORDER_KEYS = [
   "borderTop",
@@ -149,13 +150,7 @@ function isRecoveryRangeBorderWeight(value: DynamicValue): value is RecoveryRang
   return false;
 }
 
-export function normalizeOptionalString(value: DynamicValue): string | undefined {
-  return typeof value === "string" ? value : undefined;
-}
-
-export function normalizeOptionalBoolean(value: DynamicValue): boolean | undefined {
-  return typeof value === "boolean" ? value : undefined;
-}
+export { normalizeOptionalString, normalizeOptionalBoolean } from "./conditional-format-normalization.js";
 
 export function normalizeOptionalNumber(value: DynamicValue): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;

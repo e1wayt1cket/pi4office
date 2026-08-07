@@ -5,7 +5,7 @@ import type {
   RecoveryModifyStructureState,
   RecoverySheetVisibility,
   RecoveryStructureValueRangeState,
-} from "./types.js";
+} from "../recovery-states.js";
 
 export interface SyncContext {
   sync(): Promise<DynamicValue>;

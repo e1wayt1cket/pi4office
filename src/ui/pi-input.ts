@@ -1,5 +1,5 @@
 /**
- * Pi for Excel — Chat input component.
+ * Pi for Office — Chat input component.
  *
  * A clean card with auto-growing textarea and embedded send/abort button.
  * Purpose-built for a narrow sidebar. Replaces pi-web-ui's MessageEditor.

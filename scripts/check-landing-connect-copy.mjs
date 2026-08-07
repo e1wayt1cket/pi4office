@@ -7,20 +7,20 @@ const LANDING_FILE = path.join(ROOT, "public", "index.html");
 const INSTALL_DOC_FILE = path.join(ROOT, "docs", "install.md");
 
 const LANDING_REQUIRED_SNIPPETS = [
-  "npx pi-for-excel-proxy",
+  "npx pi4office-proxy",
   "curl -fsSL https://piforexcel.com/proxy | sh",
   "Built-in multi-provider web search and page fetch",
   "Extensions can call LLMs, fetch HTTP data, persist storage, and register tools through the built-in bridge.",
 ];
 
 const LANDING_FORBIDDEN_SNIPPETS = [
-  "git clone https://github.com/tmustier/pi-for-excel.git ~/.pi-for-excel",
+  "git clone https://github.com/tmustier/pi4office.git ~/.pi4office",
   "mkcert -install && mkcert localhost",
-  "cd ~/.pi-for-excel && npm run proxy:https",
+  "cd ~/.pi4office && npm run proxy:https",
 ];
 
 const INSTALL_DOC_REQUIRED_SNIPPETS = [
-  "npx pi-for-excel-proxy",
+  "npx pi4office-proxy",
   "curl -fsSL https://piforexcel.com/proxy | sh",
 ];
 

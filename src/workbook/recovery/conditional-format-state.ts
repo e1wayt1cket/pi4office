@@ -12,7 +12,7 @@ import type {
   RecoveryConditionalFormatCaptureResult,
   RecoveryConditionalFormatRule,
   RecoveryConditionalFormatRuleType,
-} from "./types.js";
+} from "../recovery-states.js";
 
 import {
   normalizeConditionalFormatAddress,

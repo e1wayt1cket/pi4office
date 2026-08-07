@@ -1,4 +1,5 @@
 export type {
+  OfficeAppType,
   SpreadsheetHost,
   SpreadsheetHostKind,
   SpreadsheetHostReadyCallback,

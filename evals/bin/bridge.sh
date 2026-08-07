@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Token-efficient bridge helpers for observing/driving Pi-for-Excel taskpanes.
+# Token-efficient bridge helpers for observing/driving Pi-for-Office taskpanes.
 # Usage:
 #   bridge.sh clients                          # list live clients (compact)
 #   bridge.sh status <clientId>                # one-line runtime status

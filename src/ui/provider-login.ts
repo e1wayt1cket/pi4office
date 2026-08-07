@@ -80,14 +80,14 @@ function showProxyGateDialog(): Promise<boolean> {
       "flex:1;padding:8px 10px;border-radius:6px;" +
       "background:var(--pi-code-bg, #1e1e1e);color:var(--pi-code-fg, #d4d4d4);" +
       "font-size:13px;font-family:var(--pi-monospace, monospace);user-select:all;";
-    codeEl.textContent = "npx pi-for-excel-proxy";
+    codeEl.textContent = "npx pi4office-proxy";
 
     const copyBtn = document.createElement("button");
     copyBtn.type = "button";
     copyBtn.textContent = t("provider.proxy_gate.copy");
     copyBtn.style.cssText = "padding:6px 12px;border-radius:6px;font-size:13px;cursor:pointer;";
     copyBtn.addEventListener("click", () => {
-      void navigator.clipboard.writeText("npx pi-for-excel-proxy").then(() => {
+      void navigator.clipboard.writeText("npx pi4office-proxy").then(() => {
         copyBtn.textContent = t("provider.proxy_gate.copied");
         setTimeout(() => { copyBtn.textContent = t("provider.proxy_gate.copy"); }, 1500);
       });
@@ -955,7 +955,7 @@ export function buildProviderRow(
                 errorEl,
                 `${escapeHtml(t("provider.cors_error"))} <code style="padding:2px 5px;border-radius:4px;` +
                   "background:var(--pi-code-bg, #1e1e1e);color:var(--pi-code-fg, #d4d4d4)\">" +
-                  `npx pi-for-excel-proxy</code>${escapeHtml(t("provider.cors_error.retry"))} ` +
+                  `npx pi4office-proxy</code>${escapeHtml(t("provider.cors_error.retry"))} ` +
                   `<a href="${escapeAttr(PROXY_HELPER_DOCS_URL)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("provider.proxy_gate.guide"))}</a>`,
                 "provider CORS helper error markup with escaped localized text",
               );

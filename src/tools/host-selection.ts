@@ -52,7 +52,7 @@ export function selectCoreToolForHost(
 }
 
 /**
- * Compose the core tool list for a host: `CORE_TOOL_NAMES` drives ordering,
+ * Compose the core tool list for a host: the given `toolNames` drives ordering,
  * `selectCoreToolForHost` swaps in fail-fast handlers where a host has no
  * implementation. Kept free of tool-implementation imports so the composition
  * behavior is directly unit-testable.
@@ -60,8 +60,9 @@ export function selectCoreToolForHost(
 export function composeCoreToolsForHost(
   createTool: (name: CoreToolName) => AnyHostSelectableTool,
   hostKind: SpreadsheetHostKind,
+  toolNames: readonly CoreToolName[] = CORE_TOOL_NAMES,
 ): AnyHostSelectableTool[] {
-  return CORE_TOOL_NAMES.map((name) => selectCoreToolForHost(name, createTool(name), hostKind));
+  return toolNames.map((name) => selectCoreToolForHost(name, createTool(name), hostKind));
 }
 
 /**

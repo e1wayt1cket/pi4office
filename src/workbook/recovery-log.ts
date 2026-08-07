@@ -47,7 +47,7 @@ import {
   toRestoreValues,
   valueAt,
 } from "./recovery/grid.js";
-import { estimateModifyStructureCellCount } from "./recovery/structure-state.js";
+import { estimateModifyStructureCellCount } from "./recovery/structure-common.js";
 import { MAX_RECOVERY_CELLS, MAX_RECOVERY_ENTRIES } from "./recovery/constants.js";
 
 export { MAX_RECOVERY_CELLS };

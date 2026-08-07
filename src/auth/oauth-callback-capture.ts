@@ -1,5 +1,5 @@
 /**
- * Poll the local Pi for Excel proxy for OAuth redirects captured on localhost.
+ * Poll the local Pi for Office proxy for OAuth redirects captured on localhost.
  *
  * Browser-safe OAuth providers still use CLI-compatible localhost redirect URIs
  * such as http://localhost:1455/auth/callback or http://localhost:8085/oauth2callback.

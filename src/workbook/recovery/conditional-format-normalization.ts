@@ -1,6 +1,4 @@
-function isRecoveryConditionalFormatNormalizationPayloadShape(value: DynamicValue): value is DynamicObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+import { isDictionaryValue } from "./helpers.js";
 
 /** Shared conditional-format normalization and schema helpers. */
 
@@ -24,7 +22,7 @@ import type {
   RecoveryConditionalPresetCriterion,
   RecoveryConditionalTextOperator,
   RecoveryConditionalTopBottomCriterionType,
-} from "./types.js";
+} from "../recovery-states.js";
 
 const SUPPORTED_CELL_VALUE_OPERATORS: readonly RecoveryConditionalCellValueOperator[] = [
   "Between",
@@ -333,14 +331,14 @@ export function normalizeUnderline(value: DynamicValue): boolean | undefined {
 }
 
 export function isRecoveryConditionalDataBarRule(value: DynamicValue): value is RecoveryConditionalDataBarRule {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalDataBarRuleType(value.type)) return false;
   if (value.formula !== undefined && typeof value.formula !== "string") return false;
   return true;
 }
 
 export function isRecoveryConditionalDataBarState(value: DynamicValue): value is RecoveryConditionalDataBarState {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalDataBarAxisFormat(value.axisFormat)) return false;
   if (!isRecoveryConditionalDataBarDirection(value.barDirection)) return false;
   if (typeof value.showDataBarOnly !== "boolean") return false;
@@ -358,7 +356,7 @@ export function isRecoveryConditionalDataBarState(value: DynamicValue): value is
 }
 
 export function isRecoveryConditionalColorScaleCriterion(value: DynamicValue): value is RecoveryConditionalColorScaleCriterion {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalColorCriterionType(value.type)) return false;
   if (value.formula !== undefined && typeof value.formula !== "string") return false;
   if (value.color !== undefined && typeof value.color !== "string") return false;
@@ -366,7 +364,7 @@ export function isRecoveryConditionalColorScaleCriterion(value: DynamicValue): v
 }
 
 export function isRecoveryConditionalColorScaleState(value: DynamicValue): value is RecoveryConditionalColorScaleState {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalColorScaleCriterion(value.minimum)) return false;
   if (!isRecoveryConditionalColorScaleCriterion(value.maximum)) return false;
   if (value.midpoint !== undefined && !isRecoveryConditionalColorScaleCriterion(value.midpoint)) return false;
@@ -374,13 +372,13 @@ export function isRecoveryConditionalColorScaleState(value: DynamicValue): value
 }
 
 export function isRecoveryConditionalIcon(value: DynamicValue): value is RecoveryConditionalIcon {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalIconSet(value.set)) return false;
   return typeof value.index === "number" && Number.isFinite(value.index);
 }
 
 export function isRecoveryConditionalIconCriterion(value: DynamicValue): value is RecoveryConditionalIconCriterion {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalIconCriterionType(value.type)) return false;
   if (!isRecoveryConditionalIconCriterionOperator(value.operator)) return false;
   if (typeof value.formula !== "string") return false;
@@ -389,7 +387,7 @@ export function isRecoveryConditionalIconCriterion(value: DynamicValue): value i
 }
 
 export function isRecoveryConditionalIconSetState(value: DynamicValue): value is RecoveryConditionalIconSetState {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return false;
+  if (!isDictionaryValue(value)) return false;
   if (!isRecoveryConditionalIconSet(value.style)) return false;
   if (typeof value.reverseIconOrder !== "boolean") return false;
   if (typeof value.showIconOnly !== "boolean") return false;
@@ -408,7 +406,7 @@ export function normalizeConditionalFormatAddress(value: DynamicValue): string |
 }
 
 export function captureDataBarRule(value: DynamicValue): RecoveryConditionalDataBarRule | null {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   const type = value.type;
   if (!isRecoveryConditionalDataBarRuleType(type)) {
@@ -429,7 +427,7 @@ export function captureDataBarRule(value: DynamicValue): RecoveryConditionalData
 }
 
 export function captureColorScaleCriterion(value: DynamicValue): RecoveryConditionalColorScaleCriterion | null {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   const type = value.type;
   if (!isRecoveryConditionalColorCriterionType(type)) {
@@ -459,7 +457,7 @@ export function captureColorScaleCriterion(value: DynamicValue): RecoveryConditi
 }
 
 export function captureConditionalIcon(value: DynamicValue): RecoveryConditionalIcon | null {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   if (!isRecoveryConditionalIconSet(value.set)) {
     return null;
@@ -476,7 +474,7 @@ export function captureConditionalIcon(value: DynamicValue): RecoveryConditional
 }
 
 export function captureIconCriterion(value: DynamicValue): RecoveryConditionalIconCriterion | null {
-  if (!isRecoveryConditionalFormatNormalizationPayloadShape(value)) return null;
+  if (!isDictionaryValue(value)) return null;
 
   const type = value.type;
   const operator = value.operator;

@@ -269,7 +269,7 @@ const previewSection = section("text-preview", "File Text Preview");
 const sampleMarkdown = `# Context Management Policy
 
 **Status:** Active policy (2026-02-12)
-**Scope:** How Pi for Excel builds and manages context
+**Scope:** How Pi for Office builds and manages context
 
 ## Why this exists
 

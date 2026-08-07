@@ -1,6 +1,6 @@
 # Agent evals harness
 
-Thin tooling for running and grading **real-Excel** evals of the pi-for-excel
+Thin tooling for running and grading **real-Excel** evals of the pi4office
 agent, per [docs/proposals/agent-evals.md](../docs/proposals/agent-evals.md).
 The task set is the asset; this harness stays deliberately thin.
 

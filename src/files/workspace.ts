@@ -115,11 +115,7 @@ function dispatchWorkspaceChanged(detail: FilesWorkspaceChangedDetail): void {
   document.dispatchEvent(new CustomEvent<FilesWorkspaceChangedDetail>(FILES_WORKSPACE_CHANGED_EVENT, { detail }));
 }
 
-function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-  const out = new ArrayBuffer(bytes.byteLength);
-  new Uint8Array(out).set(bytes);
-  return out;
-}
+import { toArrayBuffer } from "../utils/bytes.js";
 
 function closeWindowSafely(windowHandle: Window | null): void {
   if (!windowHandle || windowHandle.closed) {

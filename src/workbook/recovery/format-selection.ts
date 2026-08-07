@@ -1,6 +1,6 @@
 /** Format-selection helpers for recovery snapshots. */
 
-import type { RecoveryFormatAreaShape, RecoveryFormatSelection } from "./types.js";
+import type { RecoveryFormatAreaShape, RecoveryFormatSelection } from "../recovery-states.js";
 
 export function hasSelectedFormatProperty(selection: RecoveryFormatSelection): boolean {
   return (

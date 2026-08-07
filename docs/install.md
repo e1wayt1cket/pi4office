@@ -150,7 +150,7 @@ Typical symptoms:
 If you already have Node.js:
 
 ```bash
-npx -y pi-for-excel-proxy@latest
+npx pi4office-proxy
 ```
 
 If you do not have Node.js (or are unsure):

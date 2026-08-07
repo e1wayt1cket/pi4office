@@ -3,7 +3,7 @@
 "use strict";
 
 const DEV_TASKPANE_URL = "https://localhost:3141/src/taskpane.html";
-const PROD_TASKPANE_URL = "https://pi-for-excel.vercel.app/src/taskpane.html";
+const PROD_TASKPANE_URL = "https://pi4office.vercel.app/src/taskpane.html";
 const TASKPANE_ID_STORAGE_KEY = "pi.taskpane.id";
 
 let piTaskpane = null;

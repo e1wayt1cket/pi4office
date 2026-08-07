@@ -24,11 +24,7 @@ async function fileToBytes(file: File): Promise<Uint8Array> {
   return new Uint8Array(buffer);
 }
 
-function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
-  const out = new ArrayBuffer(bytes.byteLength);
-  new Uint8Array(out).set(bytes);
-  return out;
-}
+import { toArrayBuffer } from "../utils/bytes.js";
 
 function mapFileToEntry(path: string, file: File): WorkspaceFileEntry {
   const mimeType = inferMimeType(file.name, file.type);

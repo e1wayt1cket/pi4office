@@ -12,7 +12,7 @@ Windows QEMU guest. The generated directory can be served over HTTP and used by
 wpsjs publish or an enterprise jsplugins.xml server.
 
 Options:
-  --repo <path>          pi-for-excel repo root (default: cwd or nearest parent with wps/main.js)
+  --repo <path>          pi4office repo root (default: cwd or nearest parent with wps/main.js)
   --out <path>           output plugin dir (default: ~/VMs/wps-win11/wps-smoke-plugin)
   --name <name>          WPS plugin name (default: PiForExcelSmoke)
   --taskpane-url <url>   taskpane URL seen by guest (default: http://10.0.2.2:3141/src/taskpane.html)
@@ -172,7 +172,7 @@ function writeSmokeFiles(opts) {
 <JsPlugin>
   <ApiVersion>1.0.0</ApiVersion>
   <Name>${opts.name}</Name>
-  <Description>pi-for-excel WPS smoke plugin</Description>
+  <Description>pi4office WPS smoke plugin</Description>
 </JsPlugin>
 `);
   fs.writeFileSync(path.join(out, "jsplugins.xml"), `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

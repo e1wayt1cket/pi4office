@@ -107,7 +107,7 @@ void test("isLikelyProxyConnectionError returns false for upstream messages that
 void test("buildProxyDownErrorMessage includes tool label, fix command, and original error", () => {
   const message = buildProxyDownErrorMessage("Web search", "Load failed");
   assert.ok(message.startsWith("Error: Web search failed"));
-  assert.ok(message.includes("npx pi-for-excel-proxy"));
+  assert.ok(message.includes("npx pi4office-proxy"));
   assert.ok(message.includes("Do not retry"));
   assert.ok(message.includes("Load failed"));
 });

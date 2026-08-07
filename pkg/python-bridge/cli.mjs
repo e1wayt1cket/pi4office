@@ -7,7 +7,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
-const PACKAGE_TAG = "pi-for-excel-python-bridge";
+const PACKAGE_TAG = "pi4office-python-bridge";
 const DEFAULT_PORT = "3340";
 const INSTALL_MISSING_FLAG = "--install-missing";
 
@@ -15,7 +15,7 @@ const cliDir = path.dirname(fileURLToPath(import.meta.url));
 const bridgeScriptPath = path.join(cliDir, "scripts", "python-bridge-server.mjs");
 
 const homeDir = os.homedir();
-const appDir = path.join(homeDir, ".pi-for-excel");
+const appDir = path.join(homeDir, ".pi4office");
 const certDir = path.join(appDir, "certs");
 const keyPath = path.join(certDir, "key.pem");
 const certPath = path.join(certDir, "cert.pem");

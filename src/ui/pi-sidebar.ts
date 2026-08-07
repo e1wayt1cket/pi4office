@@ -1,5 +1,5 @@
 /**
- * Pi for Excel — Sidebar layout component.
+ * Pi for Office — Sidebar layout component.
  *
  * Replaces pi-web-ui's ChatPanel + AgentInterface with a purpose-built
  * layout for the ~350px Excel sidebar. Reuses pi-web-ui's content

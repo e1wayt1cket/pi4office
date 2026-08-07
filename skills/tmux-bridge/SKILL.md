@@ -42,7 +42,7 @@ For long-running jobs, avoid rapid repeated captures. Prefer:
 The bridge is a local HTTPS server. Run it from a terminal:
 
 ```bash
-npx pi-for-excel-tmux-bridge
+npx pi4office-tmux-bridge
 ```
 
 This defaults to **real tmux mode** on `https://localhost:3341`.
@@ -80,6 +80,6 @@ The `tmux` tool stays registered but returns an error if the bridge is unreachab
 
 ## Troubleshooting
 
-- **"bridge URL is unavailable"** — the bridge process isn't running. Start it with `npx pi-for-excel-tmux-bridge`.
+- **"bridge URL is unavailable"** — the bridge process isn't running. Start it with `npx pi4office-tmux-bridge`.
 - **"timed out"** — the bridge is running but the command took too long. Default timeout is 15s; use `timeout_ms` for longer operations.
 - **CORS/cert errors** — visit the bridge URL directly in your browser and accept the certificate.

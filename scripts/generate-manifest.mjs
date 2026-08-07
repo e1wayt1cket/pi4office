@@ -4,8 +4,8 @@
  * Generate a production manifest from the dev manifest.
  *
  * Usage:
- *   ADDIN_BASE_URL="https://pi-for-excel.vercel.app" node scripts/generate-manifest.mjs
- *   ADDIN_BASE_URL="https://pi-for-excel.example.com" OUT=manifest.prod.xml node scripts/generate-manifest.mjs
+ *   ADDIN_BASE_URL="https://pi4office.vercel.app" node scripts/generate-manifest.mjs
+ *   ADDIN_BASE_URL="https://pi4office.example.com" OUT=manifest.prod.xml node scripts/generate-manifest.mjs
  *
  * Replaces all occurrences of the dev base URL (https://localhost:3141) with ADDIN_BASE_URL.
  *
@@ -20,13 +20,13 @@ import path from "node:path";
 const DEV_BASE_URL = "https://localhost:3141";
 
 function fail(msg) {
-  console.error(`[pi-for-excel] ${msg}`);
+  console.error(`[pi4office] ${msg}`);
   process.exit(1);
 }
 
 const baseUrlRaw = process.env.ADDIN_BASE_URL;
 if (!baseUrlRaw) {
-  fail("Missing ADDIN_BASE_URL. Example: ADDIN_BASE_URL=\"https://pi-for-excel.vercel.app\"");
+  fail("Missing ADDIN_BASE_URL. Example: ADDIN_BASE_URL=\"https://pi4office.vercel.app\"");
 }
 
 const baseUrl = baseUrlRaw.trim().replace(/\/+$/, "");
@@ -63,9 +63,9 @@ if (!xml.includes(DEV_BASE_URL)) {
 const replaced = xml.split(DEV_BASE_URL).join(baseUrl);
 
 fs.writeFileSync(outPath, replaced);
-console.log(`[pi-for-excel] Wrote ${outPath}`);
+console.log(`[pi4office] Wrote ${outPath}`);
 
 // Also publish to public/ so the hosted site can offer a one-click download.
 fs.mkdirSync(path.dirname(publicOutPath), { recursive: true });
 fs.writeFileSync(publicOutPath, replaced);
-console.log(`[pi-for-excel] Wrote ${publicOutPath}`);
+console.log(`[pi4office] Wrote ${publicOutPath}`);

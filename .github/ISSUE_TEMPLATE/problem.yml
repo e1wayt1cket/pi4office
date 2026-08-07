@@ -22,7 +22,7 @@ body:
       description: Minimal steps to trigger the bug. If I can't reproduce it, I can't fix it!
       placeholder: |
         1. Open Excel
-        2. Open Pi for Excel
+        2. Open Pi for Office
         3. ...
     validations:
       required: true

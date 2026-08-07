@@ -10,7 +10,7 @@
 import type { AgentTool } from "@earendil-works/pi-agent-core";
 import type { TSchema } from "typebox";
 
-import type { SpreadsheetHostKind } from "../host/index.js";
+import type { OfficeAppType, SpreadsheetHostKind } from "../host/index.js";
 import { createGetWorkbookOverviewTool } from "./get-workbook-overview.js";
 import { createReadRangeTool } from "./read-range.js";
 import { createWriteCellsTool } from "./write-cells.js";
@@ -32,9 +32,13 @@ import {
   type SkillsToolDependencies,
 } from "./skills.js";
 import { composeCoreToolsForHost } from "./host-selection.js";
-import type { CoreToolName } from "./names.js";
+import {
+  type CoreToolName,
+  EXCEL_CORE_TOOL_NAMES,
+  SHARED_CORE_TOOL_NAMES,
+} from "./names.js";
 
-export { CORE_TOOL_NAMES } from "./names.js";
+export { CORE_TOOL_NAMES, EXCEL_CORE_TOOL_NAMES, SHARED_CORE_TOOL_NAMES } from "./names.js";
 export type { CoreToolName } from "./names.js";
 
 // We intentionally erase per-tool parameter typing at the list boundary.
@@ -43,6 +47,7 @@ export type AnyCoreTool = AgentTool<TSchema, DynamicValue>;
 
 export interface CreateCoreToolsOptions {
   hostKind?: SpreadsheetHostKind;
+  appType?: OfficeAppType;
   skills?: SkillsToolDependencies;
 }
 
@@ -70,9 +75,29 @@ const CORE_TOOL_FACTORIES = {
 
 export { isCoreToolUnsupportedOnWps } from "./host-selection.js";
 
+function resolveCoreToolNames(appType: OfficeAppType): readonly CoreToolName[] {
+  switch (appType) {
+    case "excel":
+      return [...SHARED_CORE_TOOL_NAMES, ...EXCEL_CORE_TOOL_NAMES];
+    case "word":
+      // Word starts with shared tools only;
+      // app-specific tools are registered separately.
+      return SHARED_CORE_TOOL_NAMES;
+    default:
+      // Unknown app type: expose all tools for compatibility (browser/debug).
+      return [...SHARED_CORE_TOOL_NAMES, ...EXCEL_CORE_TOOL_NAMES];
+  }
+}
+
 /** Create all core (built-in) tools for the agent. */
 export function createCoreTools(options: CreateCoreToolsOptions = {}): AnyCoreTool[] {
   const hostKind = options.hostKind ?? "office";
+  const appType = options.appType ?? "excel";
+  const toolNames = resolveCoreToolNames(appType);
 
-  return composeCoreToolsForHost((name) => CORE_TOOL_FACTORIES[name](options), hostKind);
+  return composeCoreToolsForHost(
+    (name) => CORE_TOOL_FACTORIES[name](options),
+    hostKind,
+    toolNames,
+  );
 }

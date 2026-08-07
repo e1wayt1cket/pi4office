@@ -5,7 +5,7 @@
  * https://github.com/badlogic/pi-mono) as part of the UI ownership migration
  * (docs/ui-ownership.md).
  *
- * Pi for Excel does not currently create attachment or artifact messages
+ * Pi for Office does not currently create attachment or artifact messages
  * (document parsing was never bundled), but the roles remain part of the
  * message union so that:
  * - restored/shared sessions containing them keep loading, and

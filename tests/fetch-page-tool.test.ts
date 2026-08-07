@@ -80,7 +80,7 @@ void test("fetch_page reports proxy-down error when proxy is unreachable", async
   const text = result.content[0]?.type === "text" ? result.content[0].text : "";
 
   assert.ok(text.includes("local CORS proxy is not running"));
-  assert.ok(text.includes("npx pi-for-excel-proxy"));
+  assert.ok(text.includes("npx pi4office-proxy"));
   assert.ok(text.includes("Do not retry"));
 
   const details = result.details as { ok?: boolean; proxyDown?: boolean; error?: string };

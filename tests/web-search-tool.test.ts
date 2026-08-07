@@ -325,7 +325,7 @@ void test("web_search reports proxy-down error when proxy is unreachable", async
   const text = result.content[0];
   assert.equal(text.type, "text");
   assert.ok((text as { text: string }).text.includes("local CORS proxy is not running"));
-  assert.ok((text as { text: string }).text.includes("npx pi-for-excel-proxy"));
+  assert.ok((text as { text: string }).text.includes("npx pi4office-proxy"));
   assert.ok((text as { text: string }).text.includes("Do not retry"));
 
   const details = result.details as { ok?: boolean; proxyDown?: boolean; error?: string };

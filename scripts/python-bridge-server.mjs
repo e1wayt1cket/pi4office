@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Local Python / LibreOffice bridge for Pi for Excel.
+ * Local Python / LibreOffice bridge for Pi for Office.
  *
  * Modes:
  * - stub (default): deterministic simulated responses for local development.
@@ -26,7 +26,7 @@ const useHttps = args.has("--https") || process.env.HTTPS === "1" || process.env
 const useHttp = args.has("--http");
 
 if (useHttps && useHttp) {
-  console.error("[pi-for-excel] Invalid args: can't use both --https and --http");
+  console.error("[pi4office] Invalid args: can't use both --https and --http");
   process.exit(1);
 }
 
@@ -36,7 +36,7 @@ const PORT = Number.parseInt(process.env.PORT || "3340", 10);
 const MODE_RAW = (process.env.PYTHON_BRIDGE_MODE || "stub").trim().toLowerCase();
 const MODE = MODE_RAW === "real" ? "real" : MODE_RAW === "stub" ? "stub" : null;
 if (!MODE) {
-  console.error(`[pi-for-excel] Invalid PYTHON_BRIDGE_MODE: ${MODE_RAW}. Use "stub" or "real".`);
+  console.error(`[pi4office] Invalid PYTHON_BRIDGE_MODE: ${MODE_RAW}. Use "stub" or "real".`);
   process.exit(1);
 }
 
@@ -62,7 +62,7 @@ const certPath = resolveOptionalEnvPath("PI_FOR_EXCEL_CERT_PATH") ?? path.join(c
 
 const DEFAULT_ALLOWED_ORIGINS = new Set([
   "https://localhost:3141",
-  "https://pi-for-excel.vercel.app",
+  "https://pi4office.vercel.app",
 ]);
 
 const MAX_JSON_BODY_BYTES = 512 * 1024;
@@ -432,7 +432,7 @@ function probeBinary(command, args) {
       ? probe.error.message
       : String(probe.error);
 
-    console.warn(`[pi-for-excel] Binary "${command}" not available (${code}): ${message}`);
+    console.warn(`[pi4office] Binary "${command}" not available (${code}): ${message}`);
 
     return {
       available: false,
@@ -815,14 +815,14 @@ function createRealBackend() {
 
   if (!pythonInfo.available) {
     console.warn(
-      `[pi-for-excel] Python binary "${PYTHON_BIN}" is unavailable. ` +
+      `[pi4office] Python binary "${PYTHON_BIN}" is unavailable. ` +
       "python_run and python_transform_range will fail until PYTHON_BRIDGE_PYTHON_BIN is set to a valid executable.",
     );
   }
 
   if (!libreOfficeInfo.available) {
     console.warn(
-      "[pi-for-excel] LibreOffice binary is unavailable. " +
+      "[pi4office] LibreOffice binary is unavailable. " +
       "python_run can still work, but libreoffice_convert requires installing LibreOffice (soffice/libreoffice) " +
       "or setting PYTHON_BRIDGE_LIBREOFFICE_BIN.",
     );
@@ -968,7 +968,7 @@ const handler = async (req, res) => {
     const status = isHttpError ? error.status : 500;
 
     if (!isHttpError) {
-      console.error("[pi-for-excel] Unhandled python bridge error:", error);
+      console.error("[pi4office] Unhandled python bridge error:", error);
     }
 
     const message = isHttpError
@@ -988,7 +988,7 @@ const server = (() => {
   }
 
   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
-    console.error("[pi-for-excel] HTTPS requested but key.pem/cert.pem not found in repo root.");
+    console.error("[pi4office] HTTPS requested but key.pem/cert.pem not found in repo root.");
     console.error("Generate them with mkcert (see README). Example: mkcert localhost");
     process.exit(1);
   }
@@ -1004,22 +1004,22 @@ const server = (() => {
 
 server.listen(PORT, HOST, () => {
   const scheme = useHttps ? "https" : "http";
-  console.log(`[pi-for-excel] python bridge listening on ${scheme}://${HOST}:${PORT}`);
-  console.log(`[pi-for-excel] mode: ${backend.mode}`);
-  console.log(`[pi-for-excel] health: ${scheme}://${HOST}:${PORT}/health`);
-  console.log(`[pi-for-excel] endpoint: ${scheme}://${HOST}:${PORT}/v1/python-run`);
-  console.log(`[pi-for-excel] endpoint: ${scheme}://${HOST}:${PORT}/v1/libreoffice-convert`);
-  console.log(`[pi-for-excel] allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
+  console.log(`[pi4office] python bridge listening on ${scheme}://${HOST}:${PORT}`);
+  console.log(`[pi4office] mode: ${backend.mode}`);
+  console.log(`[pi4office] health: ${scheme}://${HOST}:${PORT}/health`);
+  console.log(`[pi4office] endpoint: ${scheme}://${HOST}:${PORT}/v1/python-run`);
+  console.log(`[pi4office] endpoint: ${scheme}://${HOST}:${PORT}/v1/libreoffice-convert`);
+  console.log(`[pi4office] allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
 
   if (authToken) {
-    console.log("[pi-for-excel] auth: bearer token required for POST endpoints");
+    console.log("[pi4office] auth: bearer token required for POST endpoints");
   } else {
-    console.warn("[pi-for-excel] auth: no bearer token configured — any local process on this machine can drive this bridge.");
-    console.warn("[pi-for-excel] recommended: set PYTHON_BRIDGE_TOKEN=<secret> and mirror it in Pi via /experimental python-bridge-token <secret>");
+    console.warn("[pi4office] auth: no bearer token configured — any local process on this machine can drive this bridge.");
+    console.warn("[pi4office] recommended: set PYTHON_BRIDGE_TOKEN=<secret> and mirror it in Pi via /experimental python-bridge-token <secret>");
   }
 
   if (backend.mode === "stub") {
-    console.log("[pi-for-excel] stub mode: python/libreoffice calls are simulated.");
-    console.log("[pi-for-excel] use PYTHON_BRIDGE_MODE=real for local command execution.");
+    console.log("[pi4office] stub mode: python/libreoffice calls are simulated.");
+    console.log("[pi4office] use PYTHON_BRIDGE_MODE=real for local command execution.");
   }
 });

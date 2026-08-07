@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * Minimal CORS proxy for Pi for Excel.
+ * Minimal CORS proxy for Pi for Office.
  *
  * Why this exists:
  * - Some provider OAuth/token endpoints (and some LLM APIs) block browser requests via CORS.
  * - In dev we rely on Vite's proxy. In production, you can run this locally and point
- *   Pi for Excel's proxy setting at it (default: https://localhost:3003; if
+ *   Pi for Office's proxy setting at it (default: https://localhost:3003; if
  *   3003 is busy and PORT is not set, the helper chooses a random free port).
  *
  * Usage:
@@ -49,7 +49,7 @@ const useHttps = args.has("--https") || process.env.HTTPS === "1" || process.env
 const useHttp = args.has("--http");
 
 if (useHttps && useHttp) {
-  console.error("[pi-for-excel] Invalid args: can't use both --https and --http");
+  console.error("[pi4office] Invalid args: can't use both --https and --http");
   process.exit(1);
 }
 
@@ -66,8 +66,8 @@ const hasExplicitPort = typeof process.env.PORT === "string" && process.env.PORT
 function parsePort(rawPort) {
   const port = Number.parseInt(rawPort, 10);
   if (!Number.isInteger(port) || port < 0 || port > 65535) {
-    console.error(`[pi-for-excel] Invalid PORT: ${rawPort}`);
-    console.error("[pi-for-excel] Expected an integer from 0 to 65535.");
+    console.error(`[pi4office] Invalid PORT: ${rawPort}`);
+    console.error("[pi4office] Expected an integer from 0 to 65535.");
     process.exit(1);
   }
   return port;
@@ -121,12 +121,12 @@ const allowedClientCidrs = (() => {
 
   const { cidrs, invalid } = parseClientCidrAllowlist(raw);
   if (invalid.length > 0) {
-    console.error(`[pi-for-excel] Invalid ALLOWED_CLIENT_CIDRS entries: ${invalid.join(", ")}`);
-    console.error("[pi-for-excel] Expected comma-separated IPv4 CIDRs (e.g. 10.96.0.0/13) or bare IPv4 addresses. /0 is not allowed.");
+    console.error(`[pi4office] Invalid ALLOWED_CLIENT_CIDRS entries: ${invalid.join(", ")}`);
+    console.error("[pi4office] Expected comma-separated IPv4 CIDRs (e.g. 10.96.0.0/13) or bare IPv4 addresses. /0 is not allowed.");
     process.exit(1);
   }
   if (cidrs.length === 0) {
-    console.error("[pi-for-excel] ALLOWED_CLIENT_CIDRS was set but contained no valid entries.");
+    console.error("[pi4office] ALLOWED_CLIENT_CIDRS was set but contained no valid entries.");
     process.exit(1);
   }
   return cidrs;
@@ -148,7 +148,7 @@ const HOP_BY_HOP_HEADERS = new Set([
 // Default allowlist matches our dev + hosted origins; override via env var.
 const DEFAULT_ALLOWED_ORIGINS = new Set([
   "https://localhost:3141",
-  "https://pi-for-excel.vercel.app",
+  "https://pi4office.vercel.app",
 ]);
 
 const allowedOrigins = (() => {
@@ -212,8 +212,8 @@ const configuredAllowedTargetHosts = hasConfiguredAllowedTargetHosts
 // override semantics (loopback/private bypass, GitHub-enterprise path
 // bypass) that a configured central proxy relies on being off.
 if (hasConfiguredAllowedTargetHosts && configuredAllowedTargetHosts.size === 0) {
-  console.error("[pi-for-excel] ALLOWED_TARGET_HOSTS was set but contained no valid host entries.");
-  console.error("[pi-for-excel] Expected comma-separated hostnames or IP literals (e.g. api.deepseek.com,10.97.193.77).");
+  console.error("[pi4office] ALLOWED_TARGET_HOSTS was set but contained no valid host entries.");
+  console.error("[pi4office] Expected comma-separated hostnames or IP literals (e.g. api.deepseek.com,10.97.193.77).");
   process.exit(1);
 }
 
@@ -365,11 +365,11 @@ function buildOAuthCallbackHtml(config, capture) {
   const fallbackUrl = capture?.url || "";
   const title = capture ? `${config.label} login captured` : `${config.label} login callback was incomplete`;
   const lead = capture
-    ? "You can return to Pi for Excel. The add-in should continue automatically in a moment."
-    : "Pi for Excel could not find an authorization code in this callback. Return to Pi for Excel and try logging in again.";
+    ? "You can return to Pi for Office. The add-in should continue automatically in a moment."
+    : "Pi for Office could not find an authorization code in this callback. Return to Pi for Office and try logging in again.";
   const closeHint = "This browser tab can be closed.";
   const fallbackBlock = capture
-    ? `<details><summary>If Pi for Excel did not continue automatically</summary><p>Copy this callback URL and paste it into Pi for Excel:</p><code>${htmlEscape(fallbackUrl)}</code></details>`
+    ? `<details><summary>If Pi for Office did not continue automatically</summary><p>Copy this callback URL and paste it into Pi for Office:</p><code>${htmlEscape(fallbackUrl)}</code></details>`
     : "";
 
   return `<!doctype html>
@@ -377,7 +377,7 @@ function buildOAuthCallbackHtml(config, capture) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pi for Excel login captured</title>
+<title>Pi for Office login captured</title>
 <style>
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f8faf8; color: #17211b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
   main { width: min(560px, calc(100vw - 32px)); padding: 28px; border: 1px solid #dfe7df; border-radius: 18px; background: white; box-shadow: 0 18px 55px rgba(15, 23, 18, 0.12); }
@@ -775,7 +775,7 @@ function createProxyServer() {
   }
 
   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
-    console.error("[pi-for-excel] HTTPS requested but TLS key/cert not found:");
+    console.error("[pi4office] HTTPS requested but TLS key/cert not found:");
     console.error(`  key:  ${keyPath}${fs.existsSync(keyPath) ? "" : "  (missing)"}`);
     console.error(`  cert: ${certPath}${fs.existsSync(certPath) ? "" : "  (missing)"}`);
     console.error("For local dev, generate key.pem/cert.pem with mkcert (see README). Example: mkcert localhost");
@@ -796,44 +796,44 @@ function logStartup(listeningPort, listeningHosts) {
   const scheme = useHttps ? "https" : "http";
   const formattedHost = HOST.includes(":") && !HOST.startsWith("[") ? `[${HOST}]` : HOST;
   const proxyUrl = `${scheme}://${formattedHost}:${listeningPort}`;
-  console.log(`[pi-for-excel] CORS proxy listening on ${proxyUrl}`);
+  console.log(`[pi4office] CORS proxy listening on ${proxyUrl}`);
   if (listeningHosts.length > 1) {
-    console.log(`[pi-for-excel] Listening on loopback addresses: ${listeningHosts.join(", ")}`);
+    console.log(`[pi4office] Listening on loopback addresses: ${listeningHosts.join(", ")}`);
   }
-  console.log(`[pi-for-excel] Format: ${proxyUrl}/?url=<target-url>`);
+  console.log(`[pi4office] Format: ${proxyUrl}/?url=<target-url>`);
   if (listeningPort !== DEFAULT_PORT) {
-    console.log(`[pi-for-excel] Update Pi for Excel /settings → Proxy URL to ${proxyUrl}`);
+    console.log(`[pi4office] Update Pi for Office /settings → Proxy URL to ${proxyUrl}`);
   }
-  console.log(`[pi-for-excel] Allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
+  console.log(`[pi4office] Allowed origins: ${Array.from(allowedOrigins).join(", ")}`);
 
   if (allowedClientCidrs.length > 0) {
-    console.log(`[pi-for-excel] WARNING: accepting non-loopback clients from: ${allowedClientCidrs.map((c) => c.entry).join(", ")} (ALLOWED_CLIENT_CIDRS)`);
-    console.log("[pi-for-excel] Ensure network-level controls also restrict who can reach this proxy.");
+    console.log(`[pi4office] WARNING: accepting non-loopback clients from: ${allowedClientCidrs.map((c) => c.entry).join(", ")} (ALLOWED_CLIENT_CIDRS)`);
+    console.log("[pi4office] Ensure network-level controls also restrict who can reach this proxy.");
   } else {
-    console.log("[pi-for-excel] Client policy: loopback only");
+    console.log("[pi4office] Client policy: loopback only");
   }
 
   if (allowAllTargetHosts) {
-    console.log("[pi-for-excel] WARNING: target host allowlisting disabled (ALLOW_ALL_TARGET_HOSTS=1)");
+    console.log("[pi4office] WARNING: target host allowlisting disabled (ALLOW_ALL_TARGET_HOSTS=1)");
   } else {
     const source = configuredAllowedTargetHosts.size > 0 ? "ALLOWED_TARGET_HOSTS" : "default";
-    console.log(`[pi-for-excel] Allowed target hosts (${source}): ${Array.from(allowedTargetHosts).join(", ")}`);
+    console.log(`[pi4office] Allowed target hosts (${source}): ${Array.from(allowedTargetHosts).join(", ")}`);
 
     if (configuredAllowedTargetHosts.size === 0) {
-      console.log("[pi-for-excel] GitHub enterprise OAuth/Copilot endpoints on custom domains are allowed by path.");
+      console.log("[pi4office] GitHub enterprise OAuth/Copilot endpoints on custom domains are allowed by path.");
     }
   }
 
   if (allowLoopbackTargets) {
-    console.log("[pi-for-excel] WARNING: loopback target blocking disabled (ALLOW_LOOPBACK_TARGETS=1)");
+    console.log("[pi4office] WARNING: loopback target blocking disabled (ALLOW_LOOPBACK_TARGETS=1)");
   }
 
   if (allowPrivateTargets) {
-    console.log("[pi-for-excel] WARNING: private/local target blocking disabled (ALLOW_PRIVATE_TARGETS=1)");
+    console.log("[pi4office] WARNING: private/local target blocking disabled (ALLOW_PRIVATE_TARGETS=1)");
   }
 
   if (strictTargetResolution) {
-    console.log("[pi-for-excel] Strict DNS resolution enabled (STRICT_TARGET_RESOLUTION=1)");
+    console.log("[pi4office] Strict DNS resolution enabled (STRICT_TARGET_RESOLUTION=1)");
   }
 }
 
@@ -870,13 +870,13 @@ function listenOAuthCallbackServer(entry) {
   const onError = (err) => {
     cleanup();
     const code = typeof err?.code === "string" ? err.code : "listen_error";
-    console.warn(`[pi-for-excel] OAuth callback capture listener unavailable (${code}).`);
-    console.warn("[pi-for-excel] Affected OAuth logins will still work with manual callback URL paste.");
+    console.warn(`[pi4office] OAuth callback capture listener unavailable (${code}).`);
+    console.warn("[pi4office] Affected OAuth logins will still work with manual callback URL paste.");
   };
 
   const onListening = () => {
     cleanup();
-    console.log("[pi-for-excel] OAuth callback capture listener started.");
+    console.log("[pi4office] OAuth callback capture listener started.");
   };
 
   entry.server.once("error", onError);
@@ -966,21 +966,21 @@ async function listen(port) {
     }
 
     if (skippedHosts.length > 0) {
-      console.warn(`[pi-for-excel] Skipped unavailable loopback addresses: ${skippedHosts.join(", ")}`);
+      console.warn(`[pi4office] Skipped unavailable loopback addresses: ${skippedHosts.join(", ")}`);
     }
     logStartup(selectedPort, entries.map((entry) => entry.host));
   } catch (error) {
     const code = typeof error?.code === "string" ? error.code : "";
     if (code === "EADDRINUSE" && !hasExplicitPort && port === DEFAULT_PORT) {
-      console.warn(`[pi-for-excel] Port ${DEFAULT_PORT} is already in use; choosing a random available port instead.`);
+      console.warn(`[pi4office] Port ${DEFAULT_PORT} is already in use; choosing a random available port instead.`);
       await listen(0);
       return;
     }
 
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`[pi-for-excel] Failed to listen on ${HOST}:${port}: ${message}`);
+    console.error(`[pi4office] Failed to listen on ${HOST}:${port}: ${message}`);
     if (hasExplicitPort) {
-      console.error("[pi-for-excel] Choose a different port with PORT=0 (random) or PORT=<port>.");
+      console.error("[pi4office] Choose a different port with PORT=0 (random) or PORT=<port>.");
     }
     process.exit(1);
   }

@@ -20,6 +20,7 @@ function browserReadyInfo(reason: "office-unavailable"): SpreadsheetHostReadyInf
     kind: "browser",
     nativeHost: null,
     nativePlatform: null,
+    appType: "unknown",
     reason,
   };
 }
@@ -29,6 +30,7 @@ function officeTimeoutReadyInfo(): SpreadsheetHostReadyInfo {
     kind: "office",
     nativeHost: null,
     nativePlatform: null,
+    appType: "unknown",
     reason: "office-timeout",
   };
 }

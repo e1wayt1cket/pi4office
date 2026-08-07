@@ -19,6 +19,7 @@ export const WPS_UNSUPPORTED_PHASE_1_MESSAGE =
 
 export class WpsHost implements SpreadsheetHost {
   readonly kind = "wps";
+  readonly appType = "excel";
   readonly displayName = "WPS Spreadsheets";
   readonly sessionStorage: SpreadsheetHostSessionStorage = settingsBackedSessionStorage;
 
@@ -27,6 +28,7 @@ export class WpsHost implements SpreadsheetHost {
       kind: "wps",
       nativeHost: "wps",
       nativePlatform: null,
+      appType: "excel",
       reason: "wps-jsapi",
     });
   }
@@ -39,6 +41,7 @@ export class WpsHost implements SpreadsheetHost {
         kind: "wps",
         nativeHost: "wps",
         nativePlatform: null,
+        appType: "excel",
         reason: "wps-jsapi",
       });
     });

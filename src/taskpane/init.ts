@@ -541,6 +541,7 @@ export async function initTaskpane(opts: {
       const conventions = await getResolvedConventions(settings);
       const activeIntegrations = buildIntegrationPromptEntries(args.activeIntegrationIds);
       return buildSystemPrompt({
+        appType: spreadsheetHost.appType,
         userInstructions: userRules,
         workbookInstructions: workbookRules,
         activeIntegrations,
@@ -553,6 +554,7 @@ export async function initTaskpane(opts: {
     } catch {
       setRulesActive(false);
       return buildSystemPrompt({
+        appType: spreadsheetHost.appType,
         activeConnections,
         localServices: localServicesSnapshot,
         availableSkills,
@@ -795,7 +797,7 @@ export async function initTaskpane(opts: {
   const refreshCapabilitiesForAllRuntimes = createAsyncCoalescer(runCapabilityRefreshPass);
 
   const reservedToolNames = new Set([
-    ...createAllTools({ hostKind: spreadsheetHost.kind }).map((tool) => tool.name),
+    ...createAllTools({ hostKind: spreadsheetHost.kind, appType: spreadsheetHost.appType }).map((tool) => tool.name),
     ...getIntegrationToolNames(),
   ]);
   const connectionManager = new ConnectionManager({ settings });
@@ -940,6 +942,7 @@ export async function initTaskpane(opts: {
 
       const coreTools = createAllTools({
         hostKind: spreadsheetHost.kind,
+        appType: spreadsheetHost.appType,
         getExtensionManager: () => extensionManager,
         getSessionId: () => runtimeAgent?.sessionId ?? runtimeSessionId,
         skillReadCache: runtimeSkillReadCache,

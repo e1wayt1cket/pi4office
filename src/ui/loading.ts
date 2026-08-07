@@ -1,5 +1,5 @@
 /**
- * Pi for Excel — Loading and error state components.
+ * Pi for Office — Loading and error state components.
  *
  * Extracted for easy swapping / versioning.
  */

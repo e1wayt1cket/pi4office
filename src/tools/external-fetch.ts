@@ -72,7 +72,7 @@ export function resolveOutboundRequestUrl(args: {
 
 /* ── Proxy-down error detection ─────────────────────────────── */
 
-const PROXY_START_COMMAND = "npx pi-for-excel-proxy";
+const PROXY_START_COMMAND = "npx pi4office-proxy";
 
 /**
  * Common transport-level errors emitted when the app cannot connect to the

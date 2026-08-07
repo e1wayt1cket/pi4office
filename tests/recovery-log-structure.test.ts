@@ -3,7 +3,7 @@ import { test } from "node:test";
 
 import { MAX_RECOVERY_CELLS, WorkbookRecoveryLog } from "../src/workbook/recovery-log.ts";
 import type { WorkbookContext } from "../src/workbook/context.ts";
-import { captureValueDataRange } from "../src/workbook/recovery/structure-state.ts";
+import { captureValueDataRange } from "../src/workbook/recovery/structure-capture.ts";
 import { type RecoveryModifyStructureState } from "../src/workbook/recovery-states.ts";
 import {
   createInMemorySettingsStore,

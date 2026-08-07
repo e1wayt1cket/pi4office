@@ -16,7 +16,7 @@ import type {
   RecoveryFormatCaptureResult,
   RecoveryFormatRangeState,
   RecoveryFormatSelection,
-} from "./types.js";
+} from "../recovery-states.js";
 
 import {
   BORDER_KEY_TO_EDGE,

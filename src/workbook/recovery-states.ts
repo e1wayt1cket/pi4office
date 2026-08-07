@@ -21,7 +21,8 @@ export {
 export { estimateFormatCaptureCellCount } from "./recovery/format-selection.js";
 export { applyFormatCellsState, captureFormatCellsState } from "./recovery/format-state.js";
 export type { CaptureFormatCellsStateOptions } from "./recovery/format-state.js";
-export { applyModifyStructureState, captureModifyStructureState } from "./recovery/structure-state.js";
+export { applyModifyStructureState } from "./recovery/structure-apply.js";
+export { captureModifyStructureState } from "./recovery/structure-capture.js";
 export { applyConditionalFormatState, captureConditionalFormatState } from "./recovery/conditional-format-state.js";
 export { applyCommentThreadState, captureCommentThreadState } from "./recovery/comment-state.js";
 export { applyChartState, captureChartPresentState } from "./recovery/chart-state.js";

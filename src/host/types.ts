@@ -7,10 +7,13 @@ import type { WorkbookContext } from "./workbook-context.js";
 
 export type SpreadsheetHostKind = "office" | "wps" | "browser";
 
+export type OfficeAppType = "excel" | "word" | "unknown";
+
 export interface SpreadsheetHostReadyInfo {
   kind: SpreadsheetHostKind;
   nativeHost: string | null;
   nativePlatform: string | null;
+  appType: OfficeAppType;
   reason: "office-ready" | "office-unavailable" | "office-timeout" | "wps-jsapi" | "browser";
 }
 
@@ -30,6 +33,7 @@ export interface SpreadsheetHostSessionStorage {
 
 export interface SpreadsheetHost {
   readonly kind: SpreadsheetHostKind;
+  readonly appType: OfficeAppType;
   readonly displayName: string;
   readonly sessionStorage: SpreadsheetHostSessionStorage;
 

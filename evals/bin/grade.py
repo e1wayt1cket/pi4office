@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Standard grader for live pi-for-excel eval runs.
+"""Standard grader for live pi4office eval runs.
 
 Inputs:
 - --seed       seed xlsx the run started from (formula ground truth)
