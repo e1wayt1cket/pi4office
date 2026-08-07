@@ -153,7 +153,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Headers",
     req.headers["access-control-request-headers"] || "*");
   res.setHeader("Access-Control-Expose-Headers",
-    "*, X-Pi-For-Excel-Proxy, x-pi4office-codex-websocket-bridge");
+    "*, x-pi4office-proxy, x-pi4office-codex-websocket-bridge");
   res.setHeader("Access-Control-Max-Age", "86400");
 }
 
@@ -213,7 +213,7 @@ async function handleProxyRequest(req, res) {
   if (rawUrl.split("?")[0] === "/healthz") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("X-Pi-For-Excel-Proxy", "1");
+    res.setHeader("x-pi4office-proxy", "1");
     res.setHeader("x-pi4office-codex-websocket-bridge", "1");
     res.end("ok");
     return;

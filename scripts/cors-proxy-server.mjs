@@ -281,7 +281,7 @@ function setCorsHeaders(req, res) {
   );
   res.setHeader(
     "Access-Control-Expose-Headers",
-    `*, X-Pi-For-Excel-Proxy, ${CODEX_WEBSOCKET_BRIDGE_HEADER}`,
+    `*, x-pi4office-proxy, ${CODEX_WEBSOCKET_BRIDGE_HEADER}`,
   );
   res.setHeader("Access-Control-Max-Age", "86400");
 }
@@ -576,7 +576,7 @@ const handler = async (req, res) => {
     }
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("X-Pi-For-Excel-Proxy", "1");
+    res.setHeader("x-pi4office-proxy", "1");
     res.setHeader(CODEX_WEBSOCKET_BRIDGE_HEADER, "1");
     res.end("ok");
     return;

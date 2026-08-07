@@ -2,7 +2,7 @@ import os from "node:os";
 
 import WebSocket from "ws";
 
-export const CODEX_WEBSOCKET_BRIDGE_HEADER = "X-Pi-For-Excel-Codex-WebSocket-Bridge";
+export const CODEX_WEBSOCKET_BRIDGE_HEADER = "x-pi4office-codex-websocket-bridge";
 export const CODEX_WEBSOCKET_BRIDGE_TRANSPORT = "codex-websocket";
 
 const MAX_REQUEST_BODY_BYTES = 32 * 1024 * 1024;

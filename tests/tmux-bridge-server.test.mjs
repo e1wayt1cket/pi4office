@@ -4,9 +4,10 @@ import { spawn, spawnSync } from "node:child_process";
 import net from "node:net";
 import { once } from "node:events";
 import { setTimeout as delay } from "node:timers/promises";
+import { fileURLToPath } from "node:url";
 
 const ORIGIN = "https://localhost:3141";
-const BRIDGE_SCRIPT_PATH = new URL("../scripts/tmux-bridge-server.mjs", import.meta.url).pathname;
+const BRIDGE_SCRIPT_PATH = fileURLToPath(new URL("../scripts/tmux-bridge-server.mjs", import.meta.url));
 
 function hasTmuxBinary() {
   const result = spawnSync("tmux", ["-V"], {

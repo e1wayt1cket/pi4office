@@ -5,9 +5,10 @@ import { once } from "node:events";
 import http from "node:http";
 import net from "node:net";
 import { setTimeout as delay } from "node:timers/promises";
+import { fileURLToPath } from "node:url";
 
 const ORIGIN = "https://localhost:3141";
-const PROXY_SCRIPT_PATH = new URL("../scripts/cors-proxy-server.mjs", import.meta.url).pathname;
+const PROXY_SCRIPT_PATH = fileURLToPath(new URL("../scripts/cors-proxy-server.mjs", import.meta.url));
 
 async function getFreePort() {
   return new Promise((resolve, reject) => {
