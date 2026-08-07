@@ -64,3 +64,29 @@ For most UI/behavior changes:
 If a release requires a manifest change (rare):
 - update and redistribute `manifest.prod.xml`
 - users re-upload the manifest in Excel
+
+---
+
+## GitHub Pages mirror (for networks where *.vercel.app is unreachable)
+
+The static build can also be served from GitHub Pages as a mirror for networks
+that cannot reach `*.vercel.app` (for example mainland China).
+
+- **URL:** `https://<owner>.github.io/<repo>/` — for this repo,
+  `https://e1wayt1cket.github.io/pi4office/`.
+- **Repo-side files already in place:**
+  - `.github/workflows/deploy-pages.yml` — builds with `--base=/pi4office/`
+    (GitHub Pages project sites live under a subpath) and deploys on every push to `main`.
+  - `manifest.pages.xml` — sideload this instead of `manifest.prod.xml`;
+    it points to the GitHub Pages URL.
+- **One-time enable:** repo **Settings → Pages → Source: GitHub Actions**.
+  After that, pushes to `main` deploy automatically.
+
+**Limitations (GitHub Pages cannot set custom response headers):**
+- No `Content-Security-Policy`, `Cache-Control`, or the OAuth callback rewrites
+  that `vercel.json` provides on Vercel. Core add-in function is unaffected;
+  security hardening is reduced.
+- `*.github.io` may also be blocked on some mainland China networks — verify
+  before relying on this mirror. In that case, a local server
+  (`npm run serve:dist`) remains the fallback.
+
