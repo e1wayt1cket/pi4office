@@ -62,6 +62,20 @@ You can try to install and run this on Windows — it might work!
 
 For more detail, see [Microsoft's guide for Windows](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing).
 
+#### Traditional: trusted shared-folder catalog
+
+The classic way to install an add-in on Windows desktop Excel — install from a shared-folder catalog. Useful when **Upload My Add-in…** is unavailable, or when you want to make the add-in available to other machines on the same network.
+
+1. Share a local folder: right-click the folder → **Properties → Sharing → Share**, and note its network path (e.g. `\\YourPC\Addins`).
+2. In Excel: **File → Options → Trust Center → Trust Center Settings → Trusted Add-in Catalogs**.
+3. Add the network path as **Catalog Url**, tick **Show in Menu**, then restart Excel.
+4. Copy `manifest.prod.xml` into the shared folder.
+5. In Excel: **Home → Add-ins → Advanced → SHARED FOLDER → Pi for Office**.
+
+> For the [local-server alternative](#alternative-install-from-a-local-server-hosted-url-unreachable), copy `manifest.xml` into the shared folder instead of `manifest.prod.xml`.
+
+For more detail, see [Microsoft's guide on network shared folders](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins).
+
 ### Excel on the Web (Office Online)
 
 > **Community-contributed — not officially tested.** These steps were provided by a contributor and may not match every Office 365 tenant. If something looks different, see [Microsoft's sideloading guide for Office on the web](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing#manually-sideload-an-add-in-to-office-on-the-web).
