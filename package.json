@@ -79,13 +79,13 @@
     "node": "^22.19.0 || >=24"
   },
   "overrides": {
-    "tmp": "0.2.5",
+    "tmp": "0.2.7",
     "axios": "1.16.0",
     "minimatch": "10.2.4",
     "rollup": "4.59.0",
     "basic-ftp": "5.3.1",
     "underscore": "1.13.8",
-    "tar": "7.5.11",
+    "tar": "7.5.22",
     "fast-xml-parser": "5.7.0",
     "@xmldom/xmldom": "0.8.13",
     "protobufjs": "7.6.2",
