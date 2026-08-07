@@ -293,6 +293,7 @@ Users install by downloading `manifest.prod.xml` and uploading it in Excel — t
 
 | Doc | Description |
 |---|---|
+| [docs/guide-zh-CN.md](docs/guide-zh-CN.md) | 中文技术文档 — features, usage, and architecture |
 | [docs/install.md](docs/install.md) | Non-technical install guide |
 | [docs/deploy-vercel.md](docs/deploy-vercel.md) | Hosted deployment (Vercel) |
 | [docs/extensions.md](docs/extensions.md) | Extension authoring guide |
