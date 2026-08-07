@@ -5,6 +5,7 @@ import net from "node:net";
 import { once } from "node:events";
 import { setTimeout as delay } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const ORIGIN = "https://localhost:3141";
 const BRIDGE_SCRIPT_PATH = fileURLToPath(new URL("../scripts/python-bridge-server.mjs", import.meta.url));
@@ -205,6 +206,29 @@ test("stub mode python endpoint returns deterministic payload", async (t) => {
   assert.equal(payload.exit_code, 0);
   assert.match(payload.stdout, /simulated/i);
   assert.equal(payload.result_json, "{\"hello\":\"world\"}");
+});
+
+test("stub mode libreoffice endpoint returns derived output path", async (t) => {
+  const bridge = await startBridge();
+  t.after(async () => {
+    await bridge.stop();
+  });
+
+  const response = await fetch(
+    `http://127.0.0.1:${bridge.port}/v1/libreoffice-convert`,
+    requestInit("POST", {
+      input_path: "/tmp/source.xlsx",
+      target_format: "csv",
+    }),
+  );
+
+  assert.equal(response.status, 200);
+
+  const payload = await response.json();
+  assert.equal(payload.ok, true);
+  assert.equal(payload.action, "convert");
+  assert.equal(payload.output_path, path.join("/tmp", "source.csv"));
+  assert.equal(payload.converter, "stub");
 });
 
 test("python bridge rejects invalid python payloads", async (t) => {
