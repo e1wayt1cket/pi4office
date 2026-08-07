@@ -208,7 +208,7 @@ stratified 15-task smoke on all-912: 28.9% soft / 20.0% hard). Reading
 single-shot sits ~17 pts below the weakest verified product agent (82.5%)
 and ~31 pts below the leader (96.5%) on the same subset — agentic
 iteration, workbook grounding, and self-verification are worth roughly
-+17–31 points over the naive single-shot floor. For Pi for Excel the
++17–31 points over the naive single-shot floor. For Pi for Office the
 single-shot 65.5% is the floor our product harness must clearly beat;
 verified-leaderboard territory (85%+) is the aspiration, and the delta we
 achieve over 65.5% is a direct measure of how much value our tool surface

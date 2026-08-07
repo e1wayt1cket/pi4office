@@ -1,7 +1,7 @@
 # Context Management Policy (cache-safe)
 
 **Status:** Active policy (2026-02-11)  
-**Scope:** How Pi for Excel builds model context across normal turns, tool loops, and long sessions **without regressing prompt caching**.
+**Scope:** How Pi for Office builds model context across normal turns, tool loops, and long sessions **without regressing prompt caching**.
 
 ---
 

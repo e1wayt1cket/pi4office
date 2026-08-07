@@ -96,7 +96,7 @@ https://localhost:3141/src/taskpane.html
 The production placeholder matches the Office production manifest:
 
 ```text
-https://pi-for-excel.vercel.app/src/taskpane.html
+https://pi4office.vercel.app/src/taskpane.html
 ```
 
 For packaging, set/replace `PI_WPS_TASKPANE_URL` (or patch the constant in
@@ -226,7 +226,7 @@ Strict product-level proof is blocked in the current personal WPS
 - On the x86 WPS build, the real Pi WPS add-in also installs and loads when the
   add-in root is served from a stable Windows-local origin. WPS fetches
   `manifest.xml`, `ribbon.xml`, `index.html`, `main.js`, and `js/ribbon.js`,
-  writes `authaddin.enable=true`, shows the real `Pi for Excel` ribbon tab, and
+  writes `authaddin.enable=true`, shows the real `Pi for Office` ribbon tab, and
   `Open Pi` opens the real `/src/taskpane.html` taskpane. The taskpane origin
   permission prompt is expected in the dev harness (`127.0.0.1` add-in opening
   `10.0.2.2:3141`), and WPS guest access to `/__pi-auth` remains blocked

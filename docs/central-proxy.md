@@ -1,8 +1,8 @@
 # Org-hosted central CORS proxy
 
-**Audience:** IT admins / platform teams rolling out Pi for Excel across an organisation.
+**Audience:** IT admins / platform teams rolling out Pi for Office across an organisation.
 
-By default, Pi for Excel expects each user to run the CORS proxy locally (`https://localhost:3003`, see [install.md](./install.md#oauth-logins-and-cors-proxy)). That requires Node.js on every machine. For managed rollouts you can instead run **one proxy on a central server** and build the add-in so it points there by default.
+By default, Pi for Office expects each user to run the CORS proxy locally (`https://localhost:3003`, see [install.md](./install.md#oauth-logins-and-cors-proxy)). That requires Node.js on every machine. For managed rollouts you can instead run **one proxy on a central server** and build the add-in so it points there by default.
 
 This guide covers both halves:
 
@@ -62,7 +62,7 @@ At startup the proxy logs its effective client, origin, and target policies — 
 ### Health checks / reverse proxies
 
 - `GET /healthz` returns `200 ok` without requiring an `Origin` header (subject to the client-address check). Point load-balancer health checks here.
-- Current builds advertise `X-Pi-For-Excel-Proxy: 1` and `X-Pi-For-Excel-Codex-WebSocket-Bridge: 1`. Require both before enabling ChatGPT GPT-5.6 Luna for users; the second capability is absent on older proxy builds.
+- Current builds advertise `x-pi4office-proxy: 1` and `x-pi4office-codex-websocket-bridge: 1`. Require both before enabling ChatGPT GPT-5.6 Luna for users; the second capability is absent on older proxy builds.
 - All *proxying* requests still require an allowlisted `Origin`. If you front the proxy with nginx, make sure it passes the `Origin` header through unchanged (nginx does by default; don't override it).
 - If you terminate TLS at the reverse proxy, note the client-address check sees the reverse proxy's address — restrict at the network layer accordingly (the proxy does not trust `X-Forwarded-For`).
 
@@ -120,4 +120,4 @@ Then in Excel: open the add-in → `/settings` → Proxy should show your org UR
 
 - **No client auth token yet** — client restriction is network + CIDR based. Tracked in [#595](https://github.com/tmustier/pi-for-excel/issues/595).
 - `ALLOWED_CLIENT_CIDRS` is IPv4-only.
-- The official hosted build (`pi-for-excel.vercel.app`) cannot use an org proxy because of its CSP; central-proxy setups must self-host the static build.
+- The official hosted build (`pi4office.vercel.app`) cannot use an org proxy because of its CSP; central-proxy setups must self-host the static build.

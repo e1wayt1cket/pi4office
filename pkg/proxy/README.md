@@ -17,7 +17,7 @@ This command:
 5. Starts loopback-only callback listeners for ChatGPT, Anthropic, and Google OAuth so supported logins can complete without copy/paste when possible
 6. Bridges authenticated ChatGPT Codex requests to the upstream WebSocket transport when Pi for Office requests it (required for GPT-5.6 Luna in Office WebViews)
 
-The bridge matches native Pi's upstream transport identity and UUIDv7 session semantics, and advertises `X-Pi-For-Excel-Codex-WebSocket-Bridge: 1` on `/healthz`. A pre-`0.2.5-pre` process is intentionally treated as outdated: stop it, then run the current package so Luna is not routed through the unsupported SSE path.
+The bridge matches native Pi's upstream transport identity and UUIDv7 session semantics, and advertises `x-pi4office-codex-websocket-bridge: 1` on `/healthz`. A pre-`0.2.5-pre` process is intentionally treated as outdated: stop it, then run the current package so Luna is not routed through the unsupported SSE path.
 
 Then in Pi for Office:
 

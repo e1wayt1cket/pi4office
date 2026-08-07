@@ -4,7 +4,7 @@ This folder contains **current** docs that should match shipped behavior.
 
 ## Guides
 - [中文技术文档（功能、用法、架构）](./guide-zh-CN.md)
-- [Install Pi for Excel](./install.md)
+- [Install Pi for Office](./install.md)
 - [Deploy hosted build on Vercel](./deploy-vercel.md)
 - [Org-hosted central CORS proxy](./central-proxy.md)
 - [Dev server behind portless (opt-in)](./portless.md)

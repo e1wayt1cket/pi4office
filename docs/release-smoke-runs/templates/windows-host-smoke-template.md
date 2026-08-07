@@ -13,7 +13,7 @@
 - Install path followed: `docs/install.md` Windows flow
 - Proxy package/version and SHA-256:
 - Proxy mode: enabled (+ URL; normally `https://localhost:3003`)
-- Confirm `/healthz` advertises both `X-Pi-For-Excel-Proxy: 1` and `X-Pi-For-Excel-Codex-WebSocket-Bridge: 1`.
+- Confirm `/healthz` advertises both `x-pi4office-proxy: 1` and `x-pi4office-codex-websocket-bridge: 1`.
 - Record Windows edition/build, architecture, Excel version/build, branch commit, and deployment URL above.
 - Crop screenshots to taskpane model/status content. Do not capture account identifiers, credentials, other windows, or non-fixture workbook content.
 

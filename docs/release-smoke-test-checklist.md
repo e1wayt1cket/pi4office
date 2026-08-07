@@ -231,7 +231,7 @@ Expected:
 
 Steps:
 
-1. Start proxy (`npx pi-for-excel-proxy`)
+1. Start proxy (`npx pi4office-proxy`)
 2. Enable proxy in settings
 3. `/login`
 4. Send provider-backed prompt

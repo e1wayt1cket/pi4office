@@ -9,7 +9,7 @@ The bridge supports two modes:
 - `stub`: in-memory tmux simulation for development/testing (does not execute shell commands)
 
 Notes:
-- The one-command helper (`npx pi-for-excel-tmux-bridge`) defaults to `tmux` mode.
+- The one-command helper (`npx pi4office-tmux-bridge`) defaults to `tmux` mode.
 - The raw server script keeps `stub` as its default for local development/test usage.
 
 ## Availability and gating
@@ -25,13 +25,13 @@ The gate is checked on each tool execution (defense in depth).
 
 ```bash
 # One-command setup (real tmux mode by default)
-npx pi-for-excel-tmux-bridge
+npx pi4office-tmux-bridge
 
 # Optional assisted dependency install (macOS/Homebrew)
-npx pi-for-excel-tmux-bridge --install-missing
+npx pi4office-tmux-bridge --install-missing
 
 # Force safe simulated mode
-TMUX_BRIDGE_MODE=stub npx pi-for-excel-tmux-bridge
+TMUX_BRIDGE_MODE=stub npx pi4office-tmux-bridge
 
 # Source checkout alternative
 npm run tmux:bridge:https
@@ -53,7 +53,7 @@ Then in the add-in:
 Optional auth token:
 
 ```bash
-TMUX_BRIDGE_TOKEN=your-secret npx pi-for-excel-tmux-bridge
+TMUX_BRIDGE_TOKEN=your-secret npx pi4office-tmux-bridge
 ```
 
 Store the same token for the tool adapter:

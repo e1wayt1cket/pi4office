@@ -1,6 +1,6 @@
 # Extensions (MVP authoring guide)
 
-Pi for Excel supports runtime extensions that can register commands/tools, render UI in the sidebar, and use mediated host capabilities (LLM, HTTP, storage, clipboard, agent steering/context, skills, downloads).
+Pi for Office supports runtime extensions that can register commands/tools, render UI in the sidebar, and use mediated host capabilities (LLM, HTTP, storage, clipboard, agent steering/context, skills, downloads).
 
 > Status: shipped with feature flags for advanced controls. Inline-code and remote-URL extensions run in sandbox runtime by default; built-in/local-module extensions stay on host runtime. Roll back untrusted sources to host runtime only via `/experimental on extension-sandbox-rollback`. Additive Widget API v2 is feature-flagged via `/experimental on extension-widget-v2`.
 
@@ -184,7 +184,7 @@ export function activate(api) {
 
 `models.refresh()` forces a remote refresh of configured dynamic providers. Cache restoration remains available when the add-in starts offline.
 
-When Pi for Excel's CORS proxy is enabled, extension-provider discovery and inference use it too. The proxy remains independently fail-closed: its deployment allowlist must permit the provider host, in addition to the extension connection's exact host allowlist.
+When Pi for Office's CORS proxy is enabled, extension-provider discovery and inference use it too. The proxy remains independently fail-closed: its deployment allowlist must permit the provider host, in addition to the extension connection's exact host allowlist.
 
 ### `agent`
 Agent API surface:

@@ -35,13 +35,13 @@ Optional bearer auth:
 
 ```bash
 # One-command setup (real local execution mode by default)
-npx pi-for-excel-python-bridge
+npx pi4office-python-bridge
 
 # Optional assisted dependency install (macOS/Homebrew)
-npx pi-for-excel-python-bridge --install-missing
+npx pi4office-python-bridge --install-missing
 
 # Force safe simulated mode
-PYTHON_BRIDGE_MODE=stub npx pi-for-excel-python-bridge
+PYTHON_BRIDGE_MODE=stub npx pi4office-python-bridge
 
 # Source checkout alternative
 npm run python:bridge:https
