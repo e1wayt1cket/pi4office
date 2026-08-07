@@ -166,6 +166,7 @@ npx pi4office-proxy
 
 | 文档 | 说明 |
 |---|---|
+| [docs/guide-zh-CN.md](./docs/guide-zh-CN.md) | **中文技术文档**——功能详解、使用方式、技术架构与管线 |
 | [README.md](./README.md) | 完整功能介绍、开发者快速上手、架构说明 |
 | [docs/install.md](./docs/install.md) | 完整安装指南 |
 | [docs/integrations-external-tools.md](./docs/integrations-external-tools.md) | 联网搜索 + MCP 集成配置 |
