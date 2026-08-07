@@ -79,6 +79,47 @@ For more detail, see [Microsoft's guide for Windows](https://learn.microsoft.com
 
 ---
 
+## Alternative: install from a local server (hosted URL unreachable)
+
+> For networks where the hosted URL (`pi-for-excel.vercel.app` / `pi4office.vercel.app`) is blocked — for example some mainland China networks. Instead of loading the add-in from the hosted URL, you run the production build on your own machine. No Vite dev server, no `npm run dev`, no hosting account.
+
+Requires: **Node.js ≥ 22** and [mkcert](https://github.com/FiloSottile/mkcert) (Office only loads add-ins over HTTPS, so local certs are required).
+
+### One-time setup
+
+```bash
+git clone https://github.com/tmustier/pi4office.git
+cd pi4office
+npm install
+
+# HTTPS certs (Office.js requires HTTPS)
+mkcert -install   # one-time CA setup
+mkcert localhost  # creates localhost.pem + localhost-key.pem
+mv localhost-key.pem key.pem
+mv localhost.pem cert.pem
+```
+
+### Build and serve
+
+```bash
+npm run build        # production build → dist/
+npm run serve:dist   # serve dist/ over HTTPS at https://localhost:3141 (keep this running)
+```
+
+### Add it to Excel
+
+Use the **`manifest.xml`** file in the repo root (it points to `https://localhost:3141`), **not** `manifest.prod.xml`:
+
+- **macOS:** copy `manifest.xml` into `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`, then fully quit and reopen Excel.
+- **Windows:** **Insert → My Add-ins → Upload My Add-in…** → select `manifest.xml`.
+- **Excel on the Web:** not applicable — this local mode targets the desktop apps.
+
+Then click **Open Pi** in the ribbon and continue from [section 3](#3-first-run-check).
+
+> After changing code, rerun `npm run build` and close/reopen the taskpane — this local mode has no hot reload. The server must stay running while you use the add-in.
+
+---
+
 ## 3) First-run check
 
 1. Open the taskpane (click the **Add-ins** button in the Home ribbon tab, then click **Pi for Excel**)
@@ -216,8 +257,9 @@ If you installed with `manifest.prod.xml`, Pi for Excel loads from a hosted URL 
 - If you already tried the XML Expansion Packs path, close Excel and repeat the upload flow above
 
 ### Taskpane opens but is blank
-- Your network may block `https://pi-for-excel.vercel.app`
+- Your network may block the hosted URL (`https://pi-for-excel.vercel.app` / `https://pi4office.vercel.app`)
 - Try a different network / VPN setting
+- Or run the add-in from a local server instead — see [Alternative: install from a local server](#alternative-install-from-a-local-server-hosted-url-unreachable)
 
 ### I installed, but changes are not visible
 - Close and reopen Excel to clear cached taskpane state
