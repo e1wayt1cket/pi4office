@@ -59,6 +59,27 @@ Rules:
 
 The `check:boundary-casts` script enforces the direct-cast rule.
 
+## Office/WPS host globals
+
+The `Word`, `Excel`, `Office`, and WPS JSAPI globals are only guaranteed to exist
+inside the matching host at execution time. The taskpane also boots in a
+browser-host fallback (no Office host) where those globals are `undefined`.
+
+Rules:
+
+- Never read host globals at module scope. A module-scope
+  `const map = { x: Word.Alignment.left }` evaluates `Word` while the module
+  loads; outside a Word host it throws `ReferenceError: Word is not defined`
+  and blanks the entire taskpane (no loading UI, no error page).
+- Access host globals lazily inside the functions that only run in the host
+  (tool `execute`, `Office.onReady` callbacks), or guard with `typeof Word !== "undefined"`.
+- Type positions (`as Word.InsertLocation`, `Record<string, Word.Alignment>`) are
+  erased at compile time and are safe.
+
+Regression: `src/tools/word/format-document.ts` previously evaluated
+`Word.Alignment` at module scope and blanked the taskpane outside a Word host;
+fixed by a lazy resolver function.
+
 ## UI and HTML safety
 
 - Avoid `innerHTML` for dynamic user/tool/session content.

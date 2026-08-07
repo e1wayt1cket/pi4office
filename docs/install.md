@@ -271,9 +271,17 @@ If you installed with `manifest.prod.xml`, Pi for Office loads from a hosted URL
 - If you already tried the XML Expansion Packs path, close Excel and repeat the upload flow above
 
 ### Taskpane opens but is blank
-- Your network may block the hosted URL (`https://pi4office.vercel.app` / `https://pi4office.vercel.app`)
+- Your network may block the hosted URL (`https://pi4office.vercel.app`)
 - Try a different network / VPN setting
 - Or run the add-in from a local server instead — see [Alternative: install from a local server](#alternative-install-from-a-local-server-hosted-url-unreachable)
+
+### Sidebar is blank in Word (local server)
+- Symptom: the taskpane opens but shows an empty white pane, with no loading UI.
+- Common cause (fixed in current builds): a Word tool module evaluated `Word.Alignment`
+  at load time and crashed the bundle when `Word` was unavailable. Update to a recent
+  build, fully quit and reopen Word, and restart the local server (`npm run serve:dist`).
+- If it persists, open the WebView developer tools and check the console for the first
+  `Uncaught` error.
 
 ### I installed, but changes are not visible
 - Close and reopen Excel to clear cached taskpane state
