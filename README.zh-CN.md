@@ -25,71 +25,133 @@ Pi for Office 是一款开源、多模型的 Microsoft Office AI 侧边栏加载
 
 ## 安装
 
-### 方式一(推荐):一键安装程序(Windows)
+### 前置准备
 
-下载并运行安装程序,自动完成证书生成、清单注册和本地服务启动:
+#### 1. 确认系统要求
 
-1. 从 [GitHub Releases](https://github.com/tmustier/pi4office/releases/latest) 下载最新版 `pi4office-setup.exe`
-2. 运行安装程序,按提示完成安装
-3. 从开始菜单启动 **Pi for Office Server**
-4. 打开 Excel,点击功能区 **开始(Home)** → **加载项(Add-ins)** → **Pi for Office**
+在开始安装前，请确保您的环境满足以下要求：
 
-安装程序会自动:
-- 生成本地 HTTPS 证书
-- 将加载项注册到 Office
-- 创建开始菜单快捷方式
-- 内置 CORS 代理(无需额外配置)
+- **操作系统**：Windows 10 / Windows 11
+- **Office 版本**：Microsoft 365 或 Office 2021 及以上版本
+- **Excel 应用**：已安装且可正常打开
+- **用户权限**：当前账户具有本机文件读写权限
 
-> 首次启动时可能提示是否信任证书,选择"是"即可。
+> **提示**：本安装方法仅适用于 Windows 版 Office，macOS 版本不支持此方式。
 
-### 方式二:手动安装
+#### 2. 下载清单文件
 
-> 如果无法使用安装程序,可以手动下载清单文件并添加到 Excel。
+在浏览器中打开以下地址下载清单文件：
 
-#### 1)下载清单文件
+```
+https://office-addin.bigmodel.cn/manifest.prod.xml
+```
 
-👉 **[manifest.prod.xml](https://pi4office.vercel.app/manifest.prod.xml)**
+**下载后请确认：**
+- [ ] 文件名称为 `manifest.prod.xml`
+- [ ] 文件后缀为 `.xml`（非 `.txt`）
 
-<details>
-<summary>备用下载链接</summary>
+---
 
-- 最新 Release: https://github.com/tmustier/pi4office/releases/latest
-- 仓库直链: https://github.com/tmustier/pi4office/blob/main/manifest.prod.xml
+### 安装步骤
 
-</details>
+#### 第一步：放置清单文件到 Wef 文件夹
 
-#### 2)添加到 Excel
+1. 按下键盘快捷键 `Win + R`，打开“运行”对话框。
 
-**Windows**
+2. 在输入框中粘贴以下路径，按回车确认：
 
-1. 打开 Excel
-2. 点击 **插入(Insert)→ 我的加载项(My Add-ins)**
-3. 点击 **上传我的加载项(Upload My Add-in…)**
-4. 选择 `manifest.prod.xml`
-5. 在功能区点击 **Open Pi** 打开侧边栏
+   ```
+   %LOCALAPPDATA%\Microsoft\Office\16.0\Wef
+   ```
 
-> ⚠️ 请通过 **上传我的加载项** 安装,不要通过 **管理 → XML 扩展包** 导入。
+   > **说明**：如果该路径下没有 `Wef` 文件夹，请手动创建。
 
-**macOS**
+3. 将下载好的 `manifest.prod.xml` 文件**直接复制**到 `Wef` 文件夹的根目录下。
 
-1. Finder 按 **Cmd + Shift + G**,粘贴 `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`
-2. 将 `manifest.prod.xml` 复制到该文件夹
-3. 完全退出 Excel 并重新打开
-4. **插入 → 我的加载项** → 找到 **Pi for Office**
+   **注意事项：**
+   - 不要放入子文件夹
+   - 不要修改文件名
+   - 确保文件后缀为 `.xml`
 
-**Excel 网页版**
+#### 第二步：共享 Wef 文件夹
 
-**开始 → 加载项 → 更多加载项 → 我的加载项 → 上传我的加载项**,选择 `manifest.prod.xml`。
+1. 右键点击 `Wef` 文件夹，选择 **“属性”**。
 
-### 3)首次运行检查
+2. 切换到 **“共享”** 选项卡。
 
-1. 打开侧边栏(**开始** → **加载项** → **Pi for Office**)
-2. 连接模型服务(见下一节)
-3. 发送测试消息:
-   - `我当前在哪个工作表?`
-   - `总结一下我当前选中的区域`
+3. 点击 **“共享(S)...”** 按钮。
 
-收到回复即表示安装成功。
+4. 在用户列表中添加用户（建议添加 `Everyone`），并将权限级别设置为 **“读取/写入”**。
+
+5. 点击 **“共享”** 完成设置。
+
+6. 共享成功后，系统会显示网络路径，例如：
+
+   ```
+   \\YOUR_COMPUTER_NAME\Wef
+   ```
+
+   > **请记录此路径**，后续步骤将需要使用。
+
+#### 第三步：在 Excel 中信任共享路径
+
+1. 打开 Excel，依次点击：
+
+   ```
+   文件 → 选项 → 信任中心 → 信任中心设置(T)...
+   ```
+
+2. 在左侧菜单中，选择 **“受信任的加载项目录”**。
+
+3. 在 **“目录 URL(U)”** 输入框中，粘贴上一步记录的网络路径（例如 `\\DESKTOP-XXXX\Wef`）。
+
+4. 点击 **“添加目录(D)”**。
+
+5. **勾选**新添加目录对应的 **“在菜单中显示”** 复选框。
+
+6. 点击 **“确定”** 保存所有设置。
+
+#### 第四步：加载插件
+
+1. **重启 Excel**（必须步骤，使信任设置生效）。
+
+2. 在 Excel 顶部菜单栏中点击 **“插入”**。
+
+3. 点击 **“我的加载项”**。
+
+4. 在弹出窗口的顶部，选择 **“共享文件夹”** 选项卡。
+
+5. 在列表中找到您的插件，点击选中。
+
+6. 点击 **“添加”** 按钮。
+
+7. 插件加载完成后，即可在 Excel 右侧任务窗格中开始使用。
+
+---
+
+### 常见问题排查
+
+| 问题现象 | 可能原因 | 解决方案 |
+| :--- | :--- | :--- |
+| “我的加载项”中看不到插件 | 信任路径未正确添加 | 重新检查第三步，确保路径与共享路径完全一致 |
+| 加载时提示证书错误 | 自签名证书未受信任 | 确保已运行 `mkcert -install` |
+| 插件加载但无法执行操作 | Wef 文件夹权限不足 | 确认共享权限为“读取/写入” |
+| 任务窗格显示空白 | CSP 策略限制或资源加载失败 | 检查网络连接，按 F12 查看开发者工具 Console 报错 |
+| 网络路径找不到 | 电脑名称变化或共享未开启 | 重新执行第二步，确认电脑名称及共享状态 |
+
+---
+
+### 注意事项
+
+1. **测试用途声明**：此“共享文件夹”部署方式**仅适用于开发与测试**。微软官方**不支持**将其用于生产环境下的插件分发。
+
+2. **平台限制**：此方法**仅适用于 Windows 版 Office**。macOS 用户需通过其他方式（如集中部署或商店发布）进行安装。
+
+3. **更新机制**：如果插件更新涉及界面变化（如新增按钮或功能入口），用户可能需要**重新安装**插件才能看到变化。
+
+4. **网络路径稳定**：确保电脑的网络名称（Computer Name）保持稳定，避免共享路径失效。
+
+5. **多用户环境**：如果同一台电脑的多个用户需要使用，每个用户需分别执行信任步骤。
 
 ---
 
@@ -126,7 +188,7 @@ Pi for Office 是一款开源、多模型的 Microsoft Office AI 侧边栏加载
 注意:
 
 - 网关若是公网 HTTPS 地址,通常可直接连接,无需代理。
-- localhost / 内网地址需经本地代理转发,启动 `pi4office-proxy` 时可能需要配置目标主机策略环境变量(如 `ALLOWED_TARGET_HOSTS`、`ALLOW_LOOPBACK_TARGETS`、`ALLOW_PRIVATE_TARGETS`),详见[英文安装指南](./docs/install.md#4-connect-a-provider)。
+- localhost / 内网地址需经本地代理转发,启动 `pi4office-proxy` 时可能需要配置目标主机策略环境变量(如 `ALLOWED_TARGET_HOSTS`、`ALLOW_LOOPBACK_TARGETS`、`ALLOW_PRIVATE_TARGETS`),详见[英文安装指南](./docs/install.md#connect-a-provider)。
 
 ### 方式三:OAuth 账号登录
 
@@ -154,9 +216,9 @@ npx pi4office-proxy
 
 ## 常见问题(简)
 
-- **"我的加载项"里看不到 Pi** —— 重启 Excel 再试;确认上传的是 `manifest.prod.xml`(不是 localhost 开发版清单)
-- **侧边栏打开但是空白** —— 你的网络可能无法访问 `https://pi4office.vercel.app`,请尝试更换网络或代理设置
-- **如何更新** —— 大多数更新自动生效,关闭并重新打开侧边栏即可;极少数情况(清单变更)需重新下载并上传 `manifest.prod.xml`
+- **"我的加载项"里看不到插件** —— 重新检查信任路径是否添加正确,确保路径与共享路径完全一致;见上文"常见问题排查"
+- **侧边栏打开但是空白** —— 检查网络连接,按 F12 查看开发者工具 Console 报错;见上文"常见问题排查"
+- **如何更新** —— 大多数更新自动生效,关闭并重新打开侧边栏即可;若更新涉及界面变化,需重新安装插件
 
 更多排错项见[英文安装指南 · Troubleshooting](./docs/install.md#troubleshooting)。
 
