@@ -229,59 +229,133 @@ taskpane.ts → bootstrap → 检测宿主 (Office/WPS/Browser) → Office.onRea
 
 ## 5. 安装方式
 
-Pi for Office 提供四种安装路径，按网络环境与工具偏好选择：
+### 5.1 前置准备
 
-### 5.1 方式一：Windows 一键安装器（推荐）
+#### 1. 确认系统要求
 
-1. 从 [GitHub Releases](https://github.com/tmustier/pi4office/releases/latest) 下载 `pi4office-setup.exe`
-2. 运行安装器——自动生成证书、注册加载项、创建开始菜单快捷方式
-3. 从开始菜单启动 **Pi for Office Server**
-4. Excel → **开始(Home) → 加载项(Add-ins) → Pi for Office**
+在开始安装前，请确保您的环境满足以下要求：
 
-安装器内置本地 HTTPS 服务与 CORS 代理，无需 Node.js 或额外配置。
+- **操作系统**：Windows 10 / Windows 11
+- **Office 版本**：Microsoft 365 或 Office 2021 及以上版本
+- **Excel 应用**：已安装且可正常打开
+- **用户权限**：当前账户具有本机文件读写权限
 
-### 5.2 方式二：手动侧载（托管版，零本地进程）
+> **提示**：本安装方法仅适用于 Windows 版 Office，macOS 版本不支持此方式。
 
-1. 下载 [manifest.prod.xml](https://pi4office.vercel.app/manifest.prod.xml)
-2. 按 [docs/install.md](./install.md) 加入 Excel/Word
-3. 功能区点 **Open Pi**
+#### 2. 下载清单文件
 
-> 插件本体托管在 Vercel，无本地服务。**注意**：在某些网络（如中国大陆）下 `*.vercel.app` 可能被 DNS 污染而无法访问；跑的是已部署版本而非本地代码。
+在浏览器中打开以下地址下载清单文件：
 
-### 5.3 方式三：传统共享文件夹目录（Windows）
-
-1. 右键文件夹 → **属性 → 共享 → 共享**，记下网络路径（如 `\\YourPC\Addins`）
-2. Excel：**文件 → 选项 → 信任中心 → 信任中心设置 → 受信任的加载项目录**
-3. 把网络路径加为 **目录 URL**，勾选**在菜单中显示**，重启 Excel
-4. 把 `manifest.prod.xml`（本地模式则为 `manifest.xml`）放进共享文件夹
-5. **开始 → 加载项 → 高级 → 共享文件夹 → Pi for Office**
-
-### 5.4 方式四：本地生产构建服务（无 Vercel、无 npm run dev）
-
-适用于托管 URL 被屏蔽的网络（如中国大陆），把生产构建跑在本机：
-
-```bash
-git clone https://github.com/tmustier/pi4office.git
-cd pi4office
-npm install
-mkcert -install          # 生成 HTTPS 证书（一次性）
-mkcert localhost
-mv localhost-key.pem key.pem
-mv localhost.pem cert.pem
-
-npm run build            # 生产构建 → dist/
-npm run serve:dist       # HTTPS 服务 https://localhost:3141（保持运行）
+```
+https://office-addin.bigmodel.cn/manifest.prod.xml
 ```
 
-然后侧载仓库根目录的 **`manifest.xml`**（指向 localhost:3141），而非 `manifest.prod.xml`。注意：无热更新，改代码需重新 `npm run build`。
+**下载后请确认：**
+- [ ] 文件名称为 `manifest.prod.xml`
+- [ ] 文件后缀为 `.xml`（非 `.txt`）
 
-### 5.5 方式五：开发者模式（本地 Vite）
+---
 
-```bash
-npm install
-mkcert -install && mkcert localhost && mv localhost-key.pem key.pem && mv localhost.pem cert.pem
-npm run use        # 起 HTTPS dev server（端口 3141）并侧载到 Excel/Word
-```
+### 5.2 安装步骤
+
+#### 第一步：放置清单文件到 Wef 文件夹
+
+1. 按下键盘快捷键 `Win + R`，打开“运行”对话框。
+
+2. 在输入框中粘贴以下路径，按回车确认：
+
+   ```
+   %LOCALAPPDATA%\Microsoft\Office\16.0\Wef
+   ```
+
+   > **说明**：如果该路径下没有 `Wef` 文件夹，请手动创建。
+
+3. 将下载好的 `manifest.prod.xml` 文件**直接复制**到 `Wef` 文件夹的根目录下。
+
+   **注意事项：**
+   - 不要放入子文件夹
+   - 不要修改文件名
+   - 确保文件后缀为 `.xml`
+
+#### 第二步：共享 Wef 文件夹
+
+1. 右键点击 `Wef` 文件夹，选择 **“属性”**。
+
+2. 切换到 **“共享”** 选项卡。
+
+3. 点击 **“共享(S)...”** 按钮。
+
+4. 在用户列表中添加用户（建议添加 `Everyone`），并将权限级别设置为 **“读取/写入”**。
+
+5. 点击 **“共享”** 完成设置。
+
+6. 共享成功后，系统会显示网络路径，例如：
+
+   ```
+   \\YOUR_COMPUTER_NAME\Wef
+   ```
+
+   > **请记录此路径**，后续步骤将需要使用。
+
+#### 第三步：在 Excel 中信任共享路径
+
+1. 打开 Excel，依次点击：
+
+   ```
+   文件 → 选项 → 信任中心 → 信任中心设置(T)...
+   ```
+
+2. 在左侧菜单中，选择 **“受信任的加载项目录”**。
+
+3. 在 **“目录 URL(U)”** 输入框中，粘贴上一步记录的网络路径（例如 `\\DESKTOP-XXXX\Wef`）。
+
+4. 点击 **“添加目录(D)”**。
+
+5. **勾选**新添加目录对应的 **“在菜单中显示”** 复选框。
+
+6. 点击 **“确定”** 保存所有设置。
+
+#### 第四步：加载插件
+
+1. **重启 Excel**（必须步骤，使信任设置生效）。
+
+2. 在 Excel 顶部菜单栏中点击 **“插入”**。
+
+3. 点击 **“我的加载项”**。
+
+4. 在弹出窗口的顶部，选择 **“共享文件夹”** 选项卡。
+
+5. 在列表中找到您的插件，点击选中。
+
+6. 点击 **“添加”** 按钮。
+
+7. 插件加载完成后，即可在 Excel 右侧任务窗格中开始使用。
+
+---
+
+### 5.3 常见问题排查
+
+| 问题现象 | 可能原因 | 解决方案 |
+| :--- | :--- | :--- |
+| “我的加载项”中看不到插件 | 信任路径未正确添加 | 重新检查第三步，确保路径与共享路径完全一致 |
+| 加载时提示证书错误 | 自签名证书未受信任 | 确保已运行 `mkcert -install` |
+| 插件加载但无法执行操作 | Wef 文件夹权限不足 | 确认共享权限为“读取/写入” |
+| 任务窗格显示空白 | CSP 策略限制或资源加载失败 | 检查网络连接，按 F12 查看开发者工具 Console 报错 |
+| 网络路径找不到 | 电脑名称变化或共享未开启 | 重新执行第二步，确认电脑名称及共享状态 |
+
+---
+
+### 5.4 注意事项
+
+1. **测试用途声明**：此“共享文件夹”部署方式**仅适用于开发与测试**。微软官方**不支持**将其用于生产环境下的插件分发。
+
+2. **平台限制**：此方法**仅适用于 Windows 版 Office**。macOS 用户需通过其他方式（如集中部署或商店发布）进行安装。
+
+3. **更新机制**：如果插件更新涉及界面变化（如新增按钮或功能入口），用户可能需要**重新安装**插件才能看到变化。
+
+4. **网络路径稳定**：确保电脑的网络名称（Computer Name）保持稳定，避免共享路径失效。
+
+5. **多用户环境**：如果同一台电脑的多个用户需要使用，每个用户需分别执行信任步骤。
 
 ---
 
@@ -391,10 +465,10 @@ npm run use        # 起 HTTPS dev server（端口 3141）并侧载到 Excel/Wor
 
 ## 9. 常见问题
 
-- **加载项列表里看不到 Pi** —— 重启 Excel；确认上传的是 `manifest.prod.xml`（非 localhost 开发版清单）
-- **侧边栏打开但空白** —— 网络可能屏蔽托管 URL，见[方式四：本地生产构建](#54-方式四本地生产构建服务无-vercel无-npm-run-dev)
+- **加载项列表里看不到插件** —— 重新检查[第 5 节](#5-安装方式)第三步的信任路径设置，确保路径与共享路径完全一致
+- **侧边栏打开但空白** —— 检查网络连接，按 F12 查看开发者工具 Console 报错；见[第 5 节常见问题排查](#53-常见问题排查)
 - **OAuth 登录失败** —— 确认代理运行且在 `/settings` 填了正确的 HTTPS 地址；可改用 API Key
-- **如何更新** —— 大多数更新自动生效（关闭重开侧边栏）；清单变更需重新上传 `manifest.prod.xml`
+- **如何更新** —— 大多数更新自动生效（关闭重开侧边栏）；若更新涉及界面变化，需重新安装插件
 - **WPS 支持** —— 实验性，见 [docs/wps-support.md](./wps-support.md)
 
 ---

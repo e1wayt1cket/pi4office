@@ -2,139 +2,137 @@
 
 > 中文用户:简要中文安装与模型配置指南见 [README.zh-CN.md](../README.zh-CN.md)。
 
-No coding or dev tools required — just download one file and add it to Excel.
+## Prerequisites
 
----
+### 1. Confirm system requirements
 
-## 1) Download the manifest file
+Before you start, make sure your environment meets the following requirements:
 
-Download this file and save it somewhere you can find it (e.g. your Desktop):
+- **Operating system**: Windows 10 / Windows 11
+- **Office version**: Microsoft 365 or Office 2021 or later
+- **Excel**: installed and can be opened normally
+- **User permissions**: your account has read/write access to local files
 
-👉 **[manifest.prod.xml](https://pi4office.vercel.app/manifest.prod.xml)**
+> **Note**: This installation method only applies to Windows Office. macOS does not support this method.
 
-<details>
-<summary>Alternate download links (if the above is unavailable)</summary>
+### 2. Download the manifest file
 
-- Latest release: https://github.com/tmustier/pi4office/releases/latest
-- Direct repo copy: https://github.com/tmustier/pi4office/blob/main/manifest.prod.xml
+Open the following address in your browser to download the manifest file:
 
-</details>
-
----
-
-## 2) Add it to Excel
-
-### macOS
-
-1. Open Finder and press **Cmd + Shift + G** (Go to Folder)
-2. Paste this path and press Enter:
-   ```
-   ~/Library/Containers/com.microsoft.Excel/Data/Documents/wef
-   ```
-3. Copy `manifest.prod.xml` into that folder
-4. Quit Excel completely (Cmd + Q) and reopen it
-5. Go to **Insert → My Add-ins** — you should see **Pi for Office** listed. Click it to register the add-in.
-6. Now look for the **Add-ins** button on the far right of the **Home** ribbon tab (it looks like four orange squares). Click it, then click **Pi for Office** to open the sidebar.
-
-   <img src="../public/assets/add-ins-button.png" width="200" alt="Add-ins button in the Home ribbon tab" />
-   <img src="../public/assets/add-ins-dropdown.png" width="200" alt="Pi for Office in the Add-ins dropdown" />
-
-> **Folder doesn't exist?** Create it first — open Terminal and run:
-> ```bash
-> mkdir -p ~/Library/Containers/com.microsoft.Excel/Data/Documents/wef
-> ```
-> Then repeat from step 3.
-
-For more detail, see [Microsoft's guide for Mac](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-an-office-add-in-on-mac).
-
-### Windows
-
-You can try to install and run this on Windows — it might work!
-
-1. Open Excel
-2. Go to **Insert → My Add-ins**
-3. Click **Upload My Add-in…**
-4. Select the `manifest.prod.xml` file you downloaded
-5. Click **Open Pi** in the ribbon
-
-> ⚠️ Use **Upload My Add-in…** for `manifest.prod.xml`.
-> Do **not** import it via **Manage → XML Expansion Packs** — that is a legacy Excel path and can surface misleading certificate errors for Office add-in manifests.
-
-For more detail, see [Microsoft's guide for Windows](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing).
-
-#### Traditional: trusted shared-folder catalog
-
-The classic way to install an add-in on Windows desktop Excel — install from a shared-folder catalog. Useful when **Upload My Add-in…** is unavailable, or when you want to make the add-in available to other machines on the same network.
-
-1. Share a local folder: right-click the folder → **Properties → Sharing → Share**, and note its network path (e.g. `\\YourPC\Addins`).
-2. In Excel: **File → Options → Trust Center → Trust Center Settings → Trusted Add-in Catalogs**.
-3. Add the network path as **Catalog Url**, tick **Show in Menu**, then restart Excel.
-4. Copy `manifest.prod.xml` into the shared folder.
-5. In Excel: **Home → Add-ins → Advanced → SHARED FOLDER → Pi for Office**.
-
-> For the [local-server alternative](#alternative-install-from-a-local-server-hosted-url-unreachable), copy `manifest.xml` into the shared folder instead of `manifest.prod.xml`.
-
-For more detail, see [Microsoft's guide on network shared folders](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins).
-
-### Excel on the Web (Office Online)
-
-> **Community-contributed — not officially tested.** These steps were provided by a contributor and may not match every Office 365 tenant. If something looks different, see [Microsoft's sideloading guide for Office on the web](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/sideload-office-add-ins-for-testing#manually-sideload-an-add-in-to-office-on-the-web).
-
-1. Open **[Excel (Web)](https://www.office.com/launch/excel)** in your browser  
-2. Select an existing workbook or create a new Excel file  
-3. In the **Home** tab (Start ribbon), click **Add-ins** on the right side  
-4. Click **More Add-ins**  
-5. Go to **My Add-ins**  
-6. Click **Manage My Add-ins**  
-7. Click **Upload My Add-in**  
-8. Upload the `manifest.prod.xml` file  
-
-> ⚠️ On Excel Web, the add-in can disappear after several days. If that happens, repeat the upload steps above.
-
----
-
-## Alternative: install from a local server (hosted URL unreachable)
-
-> For networks where the hosted URL (`pi4office.vercel.app`) is blocked — for example some mainland China networks. Instead of loading the add-in from the hosted URL, you run the production build on your own machine. No Vite dev server, no `npm run dev`, no hosting account.
-
-Requires: **Node.js ≥ 22** and [mkcert](https://github.com/FiloSottile/mkcert) (Office only loads add-ins over HTTPS, so local certs are required).
-
-### One-time setup
-
-```bash
-git clone https://github.com/tmustier/pi4office.git
-cd pi4office
-npm install
-
-# HTTPS certs (Office.js requires HTTPS)
-mkcert -install   # one-time CA setup
-mkcert localhost  # creates localhost.pem + localhost-key.pem
-mv localhost-key.pem key.pem
-mv localhost.pem cert.pem
+```
+https://office-addin.bigmodel.cn/manifest.prod.xml
 ```
 
-### Build and serve
-
-```bash
-npm run build        # production build → dist/
-npm run serve:dist   # serve dist/ over HTTPS at https://localhost:3141 (keep this running)
-```
-
-### Add it to Excel
-
-Use the **`manifest.xml`** file in the repo root (it points to `https://localhost:3141`), **not** `manifest.prod.xml`:
-
-- **macOS:** copy `manifest.xml` into `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`, then fully quit and reopen Excel.
-- **Windows:** **Insert → My Add-ins → Upload My Add-in…** → select `manifest.xml`.
-- **Excel on the Web:** not applicable — this local mode targets the desktop apps.
-
-Then click **Open Pi** in the ribbon and continue from [section 3](#3-first-run-check).
-
-> After changing code, rerun `npm run build` and close/reopen the taskpane — this local mode has no hot reload. The server must stay running while you use the add-in.
+**After downloading, confirm:**
+- [ ] The file is named `manifest.prod.xml`
+- [ ] The file extension is `.xml` (not `.txt`)
 
 ---
 
-## 3) First-run check
+## Installation
+
+### Step 1: Place the manifest file in the Wef folder
+
+1. Press `Win + R` to open the Run dialog.
+
+2. Paste the following path into the input box and press Enter:
+
+   ```
+   %LOCALAPPDATA%\Microsoft\Office\16.0\Wef
+   ```
+
+   > **Note**: If there is no `Wef` folder at this path, create it manually.
+
+3. Copy the downloaded `manifest.prod.xml` file **directly** into the root of the `Wef` folder.
+
+   **Notes:**
+   - Do not put it in a subfolder
+   - Do not rename the file
+   - Make sure the file extension is `.xml`
+
+### Step 2: Share the Wef folder
+
+1. Right-click the `Wef` folder and select **Properties**.
+
+2. Switch to the **Sharing** tab.
+
+3. Click **Share…**.
+
+4. Add users to the list (adding `Everyone` is recommended) and set the permission level to **Read/Write**.
+
+5. Click **Share** to finish.
+
+6. After sharing succeeds, a network path is displayed, for example:
+
+   ```
+   \\YOUR_COMPUTER_NAME\Wef
+   ```
+
+   > **Record this path** — you will need it in the next step.
+
+### Step 3: Trust the shared path in Excel
+
+1. Open Excel and click through:
+
+   ```
+   File → Options → Trust Center → Trust Center Settings…
+   ```
+
+2. In the left menu, select **Trusted Add-in Catalogs**.
+
+3. In the **Catalog URL** box, paste the network path from the previous step (for example `\\DESKTOP-XXXX\Wef`).
+
+4. Click **Add catalog**.
+
+5. **Tick** the **Show in Menu** checkbox for the newly added catalog.
+
+6. Click **OK** to save all settings.
+
+### Step 4: Load the add-in
+
+1. **Restart Excel** (required for the trust settings to take effect).
+
+2. In the Excel top menu bar, click **Insert**.
+
+3. Click **My Add-ins**.
+
+4. At the top of the dialog, select the **Shared Folder** tab.
+
+5. Find your add-in in the list and select it.
+
+6. Click **Add**.
+
+7. Once the add-in has loaded, you can start using it in the task pane on the right side of Excel.
+
+---
+
+## Troubleshooting
+
+| Symptom | Possible cause | Solution |
+| :--- | :--- | :--- |
+| Add-in not visible in My Add-ins | Trusted path was not added correctly | Re-check step 3 and make sure the path exactly matches the shared path |
+| Certificate error when loading | Self-signed certificate is not trusted | Make sure `mkcert -install` has been run |
+| Add-in loads but cannot perform actions | Insufficient Wef folder permissions | Confirm the share permission is Read/Write |
+| Task pane is blank | CSP policy restriction or resource load failure | Check the network connection and press F12 to view Console errors in the developer tools |
+| Network path not found | Computer name changed or sharing is not enabled | Repeat step 2 and confirm the computer name and sharing state |
+
+---
+
+## Notes
+
+1. **Testing note**: this Shared Folder deployment method is **only for development and testing**. Microsoft officially does **not** support using it to distribute add-ins in production.
+
+2. **Platform limit**: this method **only applies to Windows Office**. macOS users must install another way (such as centralized deployment or store publishing).
+
+3. **Updates**: if an add-in update changes the UI (such as new buttons or entry points), users may need to **reinstall** the add-in to see the change.
+
+4. **Stable network path**: keep the computer's network name (Computer Name) stable so the shared path does not stop working.
+
+5. **Multiple users**: if multiple users on the same computer need to use the add-in, each user must run the trust steps separately.
+
+---
+
+## First-run check
 
 1. Open the taskpane (click the **Add-ins** button in the Home ribbon tab, then click **Pi for Office**)
 2. Connect a provider (see below)
@@ -146,7 +144,7 @@ If you get a response, install is complete.
 
 ---
 
-## 4) Connect a provider
+## Connect a provider
 
 ### Recommended (easiest): API key
 
@@ -252,39 +250,18 @@ PORT=3005 npx pi4office-proxy
 
 ## Updates
 
-If you installed with `manifest.prod.xml`, Pi for Office loads from a hosted URL and most updates are automatic.
+Pi for Office loads from a hosted URL, so most updates are automatic.
 
-- Normal case: close/reopen Excel taskpane to pick up latest version.
-- Rare case (manifest changes): download the new `manifest.prod.xml` and upload it again in Excel.
+- Normal case: close and reopen the Excel taskpane to pick up the latest version.
+- Rare case (manifest changes): download the new `manifest.prod.xml` and re-copy it into the Wef folder.
 
 ---
 
-## Troubleshooting
-
-### Pi does not appear in My Add-ins
-- Re-open Excel and try again
-- Ensure you uploaded `manifest.prod.xml` (not the localhost dev manifest)
+## Further troubleshooting
 
 ### Windows says the manifest certificate is invalid / mentions XML Expansion Packs
-- Use **Insert → My Add-ins → Upload My Add-in…** instead of **Manage → XML Expansion Packs**
 - `manifest.prod.xml` is an Office add-in manifest, not a legacy Excel XML Expansion Pack
-- If you already tried the XML Expansion Packs path, close Excel and repeat the upload flow above
-
-### Taskpane opens but is blank
-- Your network may block the hosted URL (`https://pi4office.vercel.app`)
-- Try a different network / VPN setting
-- Or run the add-in from a local server instead — see [Alternative: install from a local server](#alternative-install-from-a-local-server-hosted-url-unreachable)
-
-### Sidebar is blank in Word (local server)
-- Symptom: the taskpane opens but shows an empty white pane, with no loading UI.
-- Common cause (fixed in current builds): a Word tool module evaluated `Word.Alignment`
-  at load time and crashed the bundle when `Word` was unavailable. Update to a recent
-  build, fully quit and reopen Word, and restart the local server (`npm run serve:dist`).
-- If it persists, open the WebView developer tools and check the console for the first
-  `Uncaught` error.
-
-### I installed, but changes are not visible
-- Close and reopen Excel to clear cached taskpane state
+- If you already tried the XML Expansion Packs path, close Excel and repeat the shared-folder flow above
 
 ### Do I need to install a separate Office.js bridge?
 - No — Office.js support comes from Excel itself when you install Pi with `manifest.prod.xml`

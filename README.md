@@ -73,27 +73,127 @@ Pi for Office is an AI agent that lives inside Microsoft Office. It reads your d
 
 ## Install
 
-### Windows (recommended): One-click installer
+### Prerequisites
 
-1. Download `pi4office-setup.exe` from [GitHub Releases](https://github.com/tmustier/pi4office/releases/latest)
-2. Run the installer — it auto-generates certs, registers the add-in, and creates a Start Menu shortcut
-3. Launch **Pi for Office Server** from the Start Menu
-4. Open Excel or Word → **Home** → **Add-ins** → **Pi for Office**
-5. Connect a provider (API key or OAuth), or configure a custom gateway in `/settings`
-6. Start chatting — try `What sheets do I have?`, `Outline this document`, or `Summarize this document`
+#### 1. Confirm system requirements
 
-> [!TIP]
-> The installer bundles everything: local HTTPS server, CORS proxy, TLS certs. No Node.js or mkcert setup needed. The server runs from `%LOCALAPPDATA%\pi4office`.
+Before you start, make sure your environment meets the following requirements:
 
-### Manual install (all platforms)
+- **Operating system**: Windows 10 / Windows 11
+- **Office version**: Microsoft 365 or Office 2021 or later
+- **Excel**: installed and can be opened normally
+- **User permissions**: your account has read/write access to local files
 
-1. Download [`manifest.prod.xml`](https://pi4office.vercel.app/manifest.prod.xml)
-2. Add it to Excel or Word — see [**install guide**](docs/install.md) for step-by-step instructions (macOS + Windows)
-3. Click **Open Pi** in the ribbon
-4. Connect a provider (API key or OAuth), or configure a custom OpenAI-compatible gateway in `/settings`
-5. Start chatting — try `What sheets do I have?`, `Outline this document`, or `Summarize this document`
+> **Note**: This installation method only applies to Windows Office. macOS does not support this method.
 
-> The manual install loads the add-in from Vercel (no local server needed). API-key auth works out of the box. OAuth login may need the [CORS proxy](docs/install.md#oauth-logins-and-cors-proxy): run `npx pi4office-proxy`.
+#### 2. Download the manifest file
+
+Open the following address in your browser to download the manifest file:
+
+```
+https://office-addin.bigmodel.cn/manifest.prod.xml
+```
+
+**After downloading, confirm:**
+- [ ] The file is named `manifest.prod.xml`
+- [ ] The file extension is `.xml` (not `.txt`)
+
+### Installation
+
+#### Step 1: Place the manifest file in the Wef folder
+
+1. Press `Win + R` to open the Run dialog.
+
+2. Paste the following path into the input box and press Enter:
+
+   ```
+   %LOCALAPPDATA%\Microsoft\Office\16.0\Wef
+   ```
+
+   > **Note**: If there is no `Wef` folder at this path, create it manually.
+
+3. Copy the downloaded `manifest.prod.xml` file **directly** into the root of the `Wef` folder.
+
+   **Notes:**
+   - Do not put it in a subfolder
+   - Do not rename the file
+   - Make sure the file extension is `.xml`
+
+#### Step 2: Share the Wef folder
+
+1. Right-click the `Wef` folder and select **Properties**.
+
+2. Switch to the **Sharing** tab.
+
+3. Click **Share…**.
+
+4. Add users to the list (adding `Everyone` is recommended) and set the permission level to **Read/Write**.
+
+5. Click **Share** to finish.
+
+6. After sharing succeeds, a network path is displayed, for example:
+
+   ```
+   \\YOUR_COMPUTER_NAME\Wef
+   ```
+
+   > **Record this path** — you will need it in the next step.
+
+#### Step 3: Trust the shared path in Excel
+
+1. Open Excel and click through:
+
+   ```
+   File → Options → Trust Center → Trust Center Settings…
+   ```
+
+2. In the left menu, select **Trusted Add-in Catalogs**.
+
+3. In the **Catalog URL** box, paste the network path from the previous step (for example `\\DESKTOP-XXXX\Wef`).
+
+4. Click **Add catalog**.
+
+5. **Tick** the **Show in Menu** checkbox for the newly added catalog.
+
+6. Click **OK** to save all settings.
+
+#### Step 4: Load the add-in
+
+1. **Restart Excel** (required for the trust settings to take effect).
+
+2. In the Excel top menu bar, click **Insert**.
+
+3. Click **My Add-ins**.
+
+4. At the top of the dialog, select the **Shared Folder** tab.
+
+5. Find your add-in in the list and select it.
+
+6. Click **Add**.
+
+7. Once the add-in has loaded, you can start using it in the task pane on the right side of Excel.
+
+### Troubleshooting
+
+| Symptom | Possible cause | Solution |
+| :--- | :--- | :--- |
+| Add-in not visible in My Add-ins | Trusted path was not added correctly | Re-check step 3 and make sure the path exactly matches the shared path |
+| Certificate error when loading | Self-signed certificate is not trusted | Make sure `mkcert -install` has been run |
+| Add-in loads but cannot perform actions | Insufficient Wef folder permissions | Confirm the share permission is Read/Write |
+| Task pane is blank | CSP policy restriction or resource load failure | Check the network connection and press F12 to view Console errors in the developer tools |
+| Network path not found | Computer name changed or sharing is not enabled | Repeat step 2 and confirm the computer name and sharing state |
+
+### Notes
+
+1. **Testing note**: this Shared Folder deployment method is **only for development and testing**. Microsoft officially does **not** support using it to distribute add-ins in production.
+
+2. **Platform limit**: this method **only applies to Windows Office**. macOS users must install another way (such as centralized deployment or store publishing).
+
+3. **Updates**: if an add-in update changes the UI (such as new buttons or entry points), users may need to **reinstall** the add-in to see the change.
+
+4. **Stable network path**: keep the computer's network name (Computer Name) stable so the shared path does not stop working.
+
+5. **Multiple users**: if multiple users on the same computer need to use the add-in, each user must run the trust steps separately.
 
 ## Developer Quick Start
 
