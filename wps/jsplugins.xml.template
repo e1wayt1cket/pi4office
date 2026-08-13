@@ -11,6 +11,6 @@
   <jsplugin
     name="Pi for Office"
     type="et"
-    version="0.10.0-pre"
+    version="1.0.0"
     url="{{ADDIN_BASE_URL}}/" />
 </jsplugins>

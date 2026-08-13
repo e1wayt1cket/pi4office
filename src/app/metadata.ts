@@ -5,4 +5,4 @@
  */
 
 export const APP_NAME = "pi4office";
-export const APP_VERSION = "0.10.0-pre";
+export const APP_VERSION = "1.0.0";

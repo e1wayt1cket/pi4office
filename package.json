@@ -1,6 +1,6 @@
 {
   "name": "pi4office",
-  "version": "0.10.0-pre",
+  "version": "1.0.0",
   "description": "Open-source, multi-model AI sidebar add-in for Microsoft Office (Excel, Word). Powered by Pi.",
   "type": "module",
   "scripts": {
